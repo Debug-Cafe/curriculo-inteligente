@@ -1,1 +1,0 @@
-# Currículo Inteligente
