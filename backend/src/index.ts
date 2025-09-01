@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import serverless from 'serverless-http';
 import { authRouter } from './routes/auth';
 import { resumesRouter } from './routes/resumes';
 import { usersRouter } from './routes/users';
@@ -41,8 +42,14 @@ app.use('*', (req, res) => {
   res.status(404).json({ message: 'Rota não encontrada' });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-  console.log(`Health check disponível em: http://localhost:${PORT}/health`);
-});
+// Para desenvolvimento local
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`Health check disponível em: http://localhost:${PORT}/health`);
+  });
+}
+
+// Para Vercel (serverless)
+export default serverless(app);
 
