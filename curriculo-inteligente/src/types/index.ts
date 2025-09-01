@@ -40,12 +40,25 @@ export interface RegisterData {
   password: string;
 }
 
+export interface Education {
+  id: string;
+  institution: string;
+  degree: string;
+  startDate: string;
+  endDate: string;
+  isCurrentStudy: boolean;
+  description: string;
+}
+
 export interface Resume {
   id?: string;
   userId?: string;
   personalData: PersonalData;
   skills: Skill[];
   experiences: Experience[];
+  education: Education[];
+  objectives: string;
+  template: 'modern' | 'classic' | 'creative' | 'minimal' | 'professional' | 'elegant';
   createdAt?: string;
   updatedAt?: string;
 }

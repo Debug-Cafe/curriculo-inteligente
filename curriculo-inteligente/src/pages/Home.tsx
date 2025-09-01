@@ -21,6 +21,9 @@ export default function Home() {
     personalData: { name: '', email: '', phone: '', linkedin: '', summary: '' },
     skills: [],
     experiences: [],
+    education: [],
+    objectives: '',
+    template: 'modern',
   });
   const [educations, setEducations] = useState<any[]>([]);
   const [objective, setObjective] = useState('');
@@ -157,6 +160,9 @@ export default function Home() {
       },
       skills: [],
       experiences: [],
+      education: [],
+      objectives: '',
+      template: 'modern',
     });
     setEducations([]);
     setObjective('');
@@ -416,7 +422,7 @@ export default function Home() {
         {/* Preview */}
         <div style={{ position: 'sticky', top: '32px', height: 'fit-content' }}>
           <div ref={previewRef}>
-            <ResumePreview resume={resume} template={template} theme={theme} />
+            <ResumePreview resume={resume} template={template as Resume['template']} theme={theme} />
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@ import type { Resume } from '../types';
 
 interface Props {
   resume: Resume;
-  template: 'modern' | 'classic' | 'creative';
+  template: 'modern' | 'classic' | 'creative' | 'minimal' | 'professional' | 'elegant';
   theme: {
     bg: string;
     cardBg: string;
@@ -248,7 +248,7 @@ export default function ResumePreview({ resume, template, theme }: Props) {
             <div
               style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
             >
-              {experiences.map((exp, index) => (
+              {experiences.map((exp) => (
                 <div
                   key={exp.id}
                   style={{

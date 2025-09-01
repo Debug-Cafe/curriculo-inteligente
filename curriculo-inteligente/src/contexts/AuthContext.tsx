@@ -3,7 +3,7 @@ import {
   useContext,
   useState,
   useEffect,
-  ReactNode,
+  type ReactNode,
 } from 'react';
 import type { User, LoginData, RegisterData } from '../types';
 import { authApi } from '../services/authApi';
