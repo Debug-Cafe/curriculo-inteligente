@@ -19,6 +19,10 @@
       "dest": "backend/src/index.ts"
     },
     {
+      "src": "/health",
+      "dest": "backend/src/index.ts"
+    },
+    {
       "src": "/(.*)",
       "dest": "curriculo-inteligente/dist/index.html"
     }
