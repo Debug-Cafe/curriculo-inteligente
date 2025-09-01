@@ -21,7 +21,7 @@ Sistema completo para criação de currículos profissionais com múltiplos temp
 - **6 etapas**: Dados Pessoais, Habilidades, Experiência, Educação, Objetivos, Template
 - **Auto-save** em tempo real
 - **Validação** de campos obrigatórios
-- **Barra de progresso** visual
+- **Barra de progresso** visual com rosa da marca
 
 ### ✅ Templates Profissionais
 - **6 templates**: Modern, Classic, Creative, Minimal, Professional, Elegant
@@ -30,22 +30,42 @@ Sistema completo para criação de currículos profissionais com múltiplos temp
 
 ### ✅ Temas e UX
 - **Dark/Light mode** completo
+- **Sistema de cores semântico**:
+  - Primário (azul #2563EB): Salvar, Adicionar, Login/Registro
+  - Sucesso (verde #4E6709): Exportar PDF
+  - Destrutivo (vermelho #C81E3A): Sair, Excluir
+  - Rosa da marca (#E75A84): Barra de progresso
 - **Animações** suaves
 - **Diálogos modernos** (sem alerts do browser)
 - **Atalhos de teclado**
 - **Export PDF** (funcionalidade preparada)
+
+## 🎨 Design System
+
+### Cores Semânticas
+- **Primário**: `#2563EB` (azul) - Ações principais
+- **Sucesso**: `#4E6709` (verde) - Confirmações e exports
+- **Destrutivo**: `#C81E3A` (vermelho) - Ações perigosas
+- **Marca**: `#E75A84` (rosa) - Elementos de destaque
+
+### Hierarquia de Botões
+1. **Primário**: Salvar, Adicionar, Login, Registro
+2. **Sucesso**: Exportar PDF, Concluir
+3. **Destrutivo**: Sair, Excluir, Cancelar crítico
+4. **Secundário**: Carregar, Limpar, Configurações
 
 ## 🏗️ Arquitetura
 
 ### Estrutura de Pastas
 ```
 src/
-├── components/          # Componentes reutilizáveis
-├── contexts/           # Context API (Auth)
-├── pages/              # Páginas principais
-├── services/           # APIs e integrações
-├── types/              # TypeScript interfaces
-└── main.tsx           # Entry point
+├── assets/             # Imagens e recursos
+├── components/         # Componentes reutilizáveis
+├── contexts/          # Context API (Auth)
+├── pages/             # Páginas principais
+├── services/          # APIs e integrações
+├── types/             # TypeScript interfaces
+└── main.tsx          # Entry point
 ```
 
 ### Componentes Principais
@@ -164,10 +184,15 @@ npm install
   ```bash
 npm install --legacy-peer-deps 
 ```
+
 ### 2. Configurar Variáveis de Ambiente
 ```bash
+# Copie o arquivo de exemplo
+cp .env.example .env
+
+# Edite as variáveis conforme necessário
 # .env
-REACT_APP_API_URL=http://localhost:3001/api
+VITE_API_URL=http://localhost:3001/api
 ```
 
 ### 3. Executar em Desenvolvimento
@@ -243,7 +268,15 @@ app.delete('/api/resumes/:id', authMiddleware, resumeController.delete);
 - **Responsivo**: Layout adaptável para mobile
 - **Acessibilidade**: Labels e navegação por teclado
 - **Performance**: Componentes otimizados com useRef
+- **Segurança**: Variáveis de ambiente não versionadas (.env no .gitignore)
+
+## 🔒 Segurança
+
+- Arquivo `.env` não versionado
+- Tokens JWT para autenticação
+- Validação de dados no frontend e backend
+- CORS configurado adequadamente
 
 ---
 
-**Desenvolvido com foco em UX moderna e integração backend seamless.**
+**Desenvolvido com foco em UX moderna, design system consistente e integração backend seamless.**
