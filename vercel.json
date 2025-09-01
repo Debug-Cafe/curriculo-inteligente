@@ -1,18 +1,4 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "curriculo-inteligente/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "curriculo-inteligente/dist"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
