@@ -15,6 +15,5 @@
       "dest": "/index.html"
     }
   ],
-  "installCommand": "cd curriculo-inteligente && npm install --legacy-peer-deps",
-  "buildCommand": "cd curriculo-inteligente && npm run build"
+
 }
