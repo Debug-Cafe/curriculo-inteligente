@@ -31,14 +31,7 @@ app.get('/health', (req, res) => {
 });
 
 // Servir arquivos estáticos do frontend
-const frontendPath = process.env.NODE_ENV === 'production' 
-  ? path.join(process.cwd(), 'curriculo-inteligente/dist')
-  : path.join(__dirname, '../../curriculo-inteligente/dist');
-
-console.log('Frontend path:', frontendPath);
-console.log('Current working directory:', process.cwd());
-console.log('__dirname:', __dirname);
-
+const frontendPath = path.join(__dirname, '../curriculo-inteligente/dist');
 app.use(express.static(frontendPath));
 
 // Middleware de tratamento de erros
@@ -49,10 +42,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 // Servir o frontend para todas as rotas não-API (SPA routing)
 app.get('*', (req, res) => {
-  const indexPath = process.env.NODE_ENV === 'production'
-    ? path.join(process.cwd(), 'curriculo-inteligente/dist/index.html')
-    : path.join(__dirname, '../../curriculo-inteligente/dist/index.html');
-  res.sendFile(indexPath);
+  res.sendFile(path.join(__dirname, '../curriculo-inteligente/dist/index.html'));
 });
 
 // Para desenvolvimento local
