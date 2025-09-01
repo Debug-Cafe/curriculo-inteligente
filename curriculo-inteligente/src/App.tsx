@@ -8,12 +8,12 @@ function App() {
   const [darkMode, setDarkMode] = useState(false);
 
   const theme = {
-    bg: darkMode ? '#0f172a' : '#f8fafc',
-    cardBg: darkMode ? '#1e293b' : 'white',
-    text: darkMode ? '#f1f5f9' : '#1e293b',
-    border: darkMode ? '#475569' : '#e2e8f0',
-    headerBg: darkMode ? '#1e293b' : 'white',
-    inputBg: darkMode ? '#334155' : 'white',
+    bg: darkMode ? '#1a1a2e' : '#f7f8fc',
+    cardBg: darkMode ? '#16213e' : '#ffffff',
+    text: darkMode ? '#e4e6ea' : '#2c3e50',
+    border: darkMode ? '#0f3460' : '#d1d9e6',
+    headerBg: darkMode ? '#16213e' : '#ffffff',
+    inputBg: darkMode ? '#0f3460' : '#f8fafc',
   };
 
   if (loading) {

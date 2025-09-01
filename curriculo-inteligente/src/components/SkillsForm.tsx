@@ -140,7 +140,7 @@ export default function SkillsForm({ skills, onChange, theme }: Props) {
             onClick={addSkill}
             style={{
               padding: '10px 16px',
-              background: '#3b82f6',
+              background: '#2563EB',
               color: 'white',
               border: 'none',
               borderRadius: '6px',

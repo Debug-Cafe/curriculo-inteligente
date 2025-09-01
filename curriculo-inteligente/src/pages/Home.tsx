@@ -13,6 +13,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { api } from '../services/api';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import LogoBolo from '../assets/LogoBolo.png';
 
 export default function Home() {
   const { user, logout } = useAuth();
@@ -240,26 +241,37 @@ export default function Home() {
             justifyContent: 'space-between',
           }}
         >
-          <div>
-            <h1
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <img
+              src={LogoBolo}
+              alt="Logo Bolo"
               style={{
-                fontSize: '24px',
-                fontWeight: '600',
-                color: theme.text,
+                height: '40px',
+                width: 'auto',
+                opacity: 0.85,
               }}
-            >
-              Você constrói sua história, nós te ajudamos a pôr no papel!
-            </h1>
-            <p
-              style={{
-                fontSize: '14px',
-                color: theme.text,
-                opacity: 0.7,
-                marginTop: '4px',
-              }}
-            >
-              Use nosso criador de currículos • Bem-vindo, {user?.name}!
-            </p>
+            />
+            <div>
+              <h1
+                style={{
+                  fontSize: '19px',
+                  fontWeight: '600',
+                  color: theme.text,
+                  marginBottom: '4px',
+                }}
+              >
+                Criador de Currículos Profissionais
+              </h1>
+              <p
+                style={{
+                  fontSize: '14px',
+                  color: theme.text,
+                  opacity: 0.7,
+                }}
+              >
+                Olá, {user?.name}! Crie seu currículo perfeito em minutos
+              </p>
+            </div>
           </div>
 
           <div style={{ display: 'flex', gap: '12px' }}>
@@ -267,7 +279,7 @@ export default function Home() {
               onClick={handleSave}
               style={{
                 padding: '8px 16px',
-                background: '#3b82f6',
+                background: '#2563EB',
                 color: 'white',
                 border: 'none',
                 borderRadius: '6px',
@@ -282,8 +294,8 @@ export default function Home() {
               onClick={handleLoad}
               style={{
                 padding: '8px 16px',
-                background: '#f1f5f9',
-                color: '#475569',
+                background: '#ecf0f1',
+                color: '#2c3e50',
                 border: 'none',
                 borderRadius: '6px',
                 fontSize: '14px',
@@ -298,7 +310,7 @@ export default function Home() {
               style={{
                 padding: '8px 16px',
                 background: 'transparent',
-                color: '#94a3b8',
+                color: '#7f8c8d',
                 border: 'none',
                 borderRadius: '6px',
                 fontSize: '14px',
@@ -331,7 +343,7 @@ export default function Home() {
               onClick={handleExportPDF}
               style={{
                 padding: '8px 16px',
-                background: '#10b981',
+                background: '#4E6709',
                 color: 'white',
                 border: 'none',
                 borderRadius: '6px',
@@ -346,7 +358,7 @@ export default function Home() {
               onClick={logout}
               style={{
                 padding: '8px 16px',
-                background: '#ef4444',
+                background: '#C81E3A',
                 color: 'white',
                 border: 'none',
                 borderRadius: '6px',
@@ -460,7 +472,7 @@ export default function Home() {
                   minHeight: '24px',
                   borderRadius: '50%',
                   background:
-                    index < getProgressStep() ? '#3b82f6' : theme.border,
+                    index < getProgressStep() ? '#E75A84' : theme.border,
                   color: index < getProgressStep() ? 'white' : theme.text,
                   display: 'flex',
                   alignItems: 'center',
@@ -475,7 +487,7 @@ export default function Home() {
               <span
                 style={{
                   fontSize: '12px',
-                  color: index < getProgressStep() ? '#3b82f6' : theme.text,
+                  color: index < getProgressStep() ? '#E75A84' : theme.text,
                   fontWeight: index < getProgressStep() ? '500' : '400',
                 }}
               >
