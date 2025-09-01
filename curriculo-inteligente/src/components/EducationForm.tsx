@@ -25,14 +25,18 @@ interface Props {
 }
 
 export default function EducationForm({ educations, onChange, theme }: Props) {
-  const [confirmDialog, setConfirmDialog] = useState<{ isOpen: boolean; eduId: string; eduName: string }>({ isOpen: false, eduId: '', eduName: '' });
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    eduId: string;
+    eduName: string;
+  }>({ isOpen: false, eduId: '', eduName: '' });
   const [newEdu, setNewEdu] = useState({
     institution: '',
     degree: '',
     field: '',
     startDate: '',
     endDate: '',
-    isCurrentStudy: false
+    isCurrentStudy: false,
   });
 
   const addEducation = () => {
@@ -42,7 +46,7 @@ export default function EducationForm({ educations, onChange, theme }: Props) {
         ...newEdu,
         institution: newEdu.institution.trim(),
         degree: newEdu.degree.trim(),
-        field: newEdu.field.trim()
+        field: newEdu.field.trim(),
       };
       onChange([...educations, education]);
       setNewEdu({
@@ -51,7 +55,7 @@ export default function EducationForm({ educations, onChange, theme }: Props) {
         field: '',
         startDate: '',
         endDate: '',
-        isCurrentStudy: false
+        isCurrentStudy: false,
       });
     }
   };
@@ -61,7 +65,7 @@ export default function EducationForm({ educations, onChange, theme }: Props) {
   };
 
   const handleConfirmRemove = () => {
-    onChange(educations.filter(edu => edu.id !== confirmDialog.eduId));
+    onChange(educations.filter((edu) => edu.id !== confirmDialog.eduId));
     setConfirmDialog({ isOpen: false, eduId: '', eduName: '' });
   };
 
@@ -70,36 +74,59 @@ export default function EducationForm({ educations, onChange, theme }: Props) {
   };
 
   return (
-    <div style={{
-      background: theme.cardBg,
-      border: `1px solid ${theme.border}`,
-      borderRadius: '8px',
-      padding: '24px'
-    }}>
-      <h2 style={{
-        fontSize: '18px',
-        fontWeight: '600',
-        color: theme.text,
-        marginBottom: '20px'
-      }}>
+    <div
+      style={{
+        background: theme.cardBg,
+        border: `1px solid ${theme.border}`,
+        borderRadius: '8px',
+        padding: '24px',
+      }}
+    >
+      <h2
+        style={{
+          fontSize: '18px',
+          fontWeight: '600',
+          color: theme.text,
+          marginBottom: '20px',
+        }}
+      >
         Educação
       </h2>
-      
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px',
+          marginBottom: '24px',
+        }}
+      >
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '16px',
+          }}
+        >
           <input
             type="text"
             placeholder="Instituição"
             value={newEdu.institution}
-            onChange={(e) => setNewEdu({ ...newEdu, institution: e.target.value })}
+            onChange={(e) =>
+              setNewEdu({ ...newEdu, institution: e.target.value })
+            }
             style={{
               padding: '10px 12px',
               border: `1px solid ${theme.border}`,
               borderRadius: '6px',
               fontSize: '14px',
               outline: 'none',
-              background: newEdu.institution ? (theme.inputBg === '#334155' ? '#64748b' : theme.inputBg) : theme.inputBg,
-              color: theme.text
+              background: newEdu.institution
+                ? theme.inputBg === '#334155'
+                  ? '#64748b'
+                  : theme.inputBg
+                : theme.inputBg,
+              color: theme.text,
             }}
           />
           <input
@@ -113,12 +140,16 @@ export default function EducationForm({ educations, onChange, theme }: Props) {
               borderRadius: '6px',
               fontSize: '14px',
               outline: 'none',
-              background: newEdu.degree ? (theme.inputBg === '#334155' ? '#64748b' : theme.inputBg) : theme.inputBg,
-              color: theme.text
+              background: newEdu.degree
+                ? theme.inputBg === '#334155'
+                  ? '#64748b'
+                  : theme.inputBg
+                : theme.inputBg,
+              color: theme.text,
             }}
           />
         </div>
-        
+
         <input
           type="text"
           placeholder="Área de Estudo"
@@ -130,24 +161,40 @@ export default function EducationForm({ educations, onChange, theme }: Props) {
             borderRadius: '6px',
             fontSize: '14px',
             outline: 'none',
-            background: newEdu.field ? (theme.inputBg === '#334155' ? '#64748b' : theme.inputBg) : theme.inputBg,
-            color: theme.text
+            background: newEdu.field
+              ? theme.inputBg === '#334155'
+                ? '#64748b'
+                : theme.inputBg
+              : theme.inputBg,
+            color: theme.text,
           }}
         />
-        
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '16px',
+          }}
+        >
           <input
             type="date"
             value={newEdu.startDate}
-            onChange={(e) => setNewEdu({ ...newEdu, startDate: e.target.value })}
+            onChange={(e) =>
+              setNewEdu({ ...newEdu, startDate: e.target.value })
+            }
             style={{
               padding: '10px 12px',
               border: `1px solid ${theme.border}`,
               borderRadius: '6px',
               fontSize: '14px',
               outline: 'none',
-              background: newEdu.startDate ? (theme.inputBg === '#334155' ? '#64748b' : theme.inputBg) : theme.inputBg,
-              color: theme.text
+              background: newEdu.startDate
+                ? theme.inputBg === '#334155'
+                  ? '#64748b'
+                  : theme.inputBg
+                : theme.inputBg,
+              color: theme.text,
             }}
           />
           <input
@@ -161,30 +208,44 @@ export default function EducationForm({ educations, onChange, theme }: Props) {
               borderRadius: '6px',
               fontSize: '14px',
               outline: 'none',
-              background: newEdu.isCurrentStudy ? theme.border : (newEdu.endDate ? (theme.inputBg === '#334155' ? '#64748b' : theme.inputBg) : theme.inputBg),
+              background: newEdu.isCurrentStudy
+                ? theme.border
+                : newEdu.endDate
+                  ? theme.inputBg === '#334155'
+                    ? '#64748b'
+                    : theme.inputBg
+                  : theme.inputBg,
               color: theme.text,
-              opacity: newEdu.isCurrentStudy ? 0.6 : 1
+              opacity: newEdu.isCurrentStudy ? 0.6 : 1,
             }}
           />
         </div>
-        
-        <label style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          fontSize: '14px',
-          color: theme.text,
-          cursor: 'pointer'
-        }}>
+
+        <label
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '14px',
+            color: theme.text,
+            cursor: 'pointer',
+          }}
+        >
           <input
             type="checkbox"
             checked={newEdu.isCurrentStudy}
-            onChange={(e) => setNewEdu({ ...newEdu, isCurrentStudy: e.target.checked, endDate: e.target.checked ? '' : newEdu.endDate })}
+            onChange={(e) =>
+              setNewEdu({
+                ...newEdu,
+                isCurrentStudy: e.target.checked,
+                endDate: e.target.checked ? '' : newEdu.endDate,
+              })
+            }
             style={{ width: '16px', height: '16px' }}
           />
           Estudando atualmente
         </label>
-        
+
         <button
           onClick={addEducation}
           style={{
@@ -196,63 +257,101 @@ export default function EducationForm({ educations, onChange, theme }: Props) {
             borderRadius: '6px',
             fontSize: '14px',
             fontWeight: '500',
-            cursor: 'pointer'
+            cursor: 'pointer',
           }}
         >
           Adicionar Educação
         </button>
       </div>
-      
+
       {educations.length === 0 ? (
-        <div style={{
-          border: `2px dashed ${theme.border}`,
-          borderRadius: '8px',
-          padding: '32px',
-          textAlign: 'center',
-          color: theme.text,
-          opacity: 0.7
-        }}>
+        <div
+          style={{
+            border: `2px dashed ${theme.border}`,
+            borderRadius: '8px',
+            padding: '32px',
+            textAlign: 'center',
+            color: theme.text,
+            opacity: 0.7,
+          }}
+        >
           <div style={{ fontSize: '24px', marginBottom: '8px' }}>🎓</div>
-          <p style={{ fontSize: '14px', marginBottom: '4px' }}>Nenhuma educação adicionada</p>
-          <p style={{ fontSize: '12px', color: theme.text, opacity: 0.6 }}>Adicione sua formação acadêmica</p>
+          <p style={{ fontSize: '14px', marginBottom: '4px' }}>
+            Nenhuma educação adicionada
+          </p>
+          <p style={{ fontSize: '12px', color: theme.text, opacity: 0.6 }}>
+            Adicione sua formação acadêmica
+          </p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {educations.map((edu) => (
-            <div key={edu.id} style={{
-              padding: '16px',
-              border: `1px solid ${theme.border}`,
-              borderRadius: '8px',
-              background: theme.inputBg
-            }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                marginBottom: '8px'
-              }}>
+            <div
+              key={edu.id}
+              style={{
+                padding: '16px',
+                border: `1px solid ${theme.border}`,
+                borderRadius: '8px',
+                background: theme.inputBg,
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  marginBottom: '8px',
+                }}
+              >
                 <div>
-                  <h3 style={{ fontSize: '16px', fontWeight: '600', color: theme.text, marginBottom: '4px' }}>
+                  <h3
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      color: theme.text,
+                      marginBottom: '4px',
+                    }}
+                  >
                     {edu.degree} {edu.field && `in ${edu.field}`}
                   </h3>
-                  <p style={{ fontSize: '14px', color: theme.text, opacity: 0.8, marginBottom: '4px' }}>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      color: theme.text,
+                      opacity: 0.8,
+                      marginBottom: '4px',
+                    }}
+                  >
                     {edu.institution}
                   </p>
-                  <p style={{ fontSize: '12px', color: theme.text, opacity: 0.7 }}>
-                    {edu.startDate ? new Date(edu.startDate).getFullYear() : 'N/A'} - {' '}
+                  <p
+                    style={{
+                      fontSize: '12px',
+                      color: theme.text,
+                      opacity: 0.7,
+                    }}
+                  >
+                    {edu.startDate
+                      ? new Date(edu.startDate).getFullYear()
+                      : 'N/A'}{' '}
+                    -{' '}
                     {edu.isCurrentStudy ? (
-                      <span style={{
-                        background: '#d1fae5',
-                        color: '#065f46',
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        fontSize: '11px',
-                        fontWeight: '500'
-                      }}>
+                      <span
+                        style={{
+                          background: '#d1fae5',
+                          color: '#065f46',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          fontSize: '11px',
+                          fontWeight: '500',
+                        }}
+                      >
                         Current
                       </span>
+                    ) : edu.endDate ? (
+                      new Date(edu.endDate).getFullYear()
                     ) : (
-                      edu.endDate ? new Date(edu.endDate).getFullYear() : 'N/A'
+                      'N/A'
                     )}
                   </p>
                 </div>
@@ -264,7 +363,7 @@ export default function EducationForm({ educations, onChange, theme }: Props) {
                     color: theme.text,
                     opacity: 0.6,
                     cursor: 'pointer',
-                    fontSize: '14px'
+                    fontSize: '14px',
                   }}
                 >
                   Remover
@@ -274,7 +373,7 @@ export default function EducationForm({ educations, onChange, theme }: Props) {
           ))}
         </div>
       )}
-      
+
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}
         title="Remover Formação"

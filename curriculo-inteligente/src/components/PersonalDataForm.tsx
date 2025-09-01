@@ -35,79 +35,96 @@ export default function PersonalDataForm({ data, onChange, theme }: Props) {
       email: emailRef.current?.value || '',
       phone: phoneRef.current?.value || '',
       linkedin: linkedinRef.current?.value || '',
-      summary: summaryRef.current?.value || ''
+      summary: summaryRef.current?.value || '',
     });
   };
-const formatPhone = (value: string): string => {
-  const numbers = value.replace(/\D/g, '');
-  
-  if (numbers.length <= 2) {
-    return `(${numbers}`;
-  } else if (numbers.length <= 7) {
-    return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
-  } else if (numbers.length <= 11) {
-    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
-  }
-  
-  return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
-};
+  const formatPhone = (value: string): string => {
+    const numbers = value.replace(/\D/g, '');
 
-const handlePhoneInput = () => {
-  const rawValue = phoneRef.current?.value || '';
-  const formattedValue = formatPhone(rawValue);
-  
-  if (phoneRef.current) {
-    phoneRef.current.value = formattedValue;
-  }
-  
-  onChange({
-    name: nameRef.current?.value || '',
-    email: emailRef.current?.value || '',
-    phone: formattedValue,
-    linkedin: linkedinRef.current?.value || '',
-    summary: summaryRef.current?.value || ''
-  });
-};
+    if (numbers.length <= 2) {
+      return `(${numbers}`;
+    } else if (numbers.length <= 7) {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    } else if (numbers.length <= 11) {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
+    }
+
+    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
+  };
+
+  const handlePhoneInput = () => {
+    const rawValue = phoneRef.current?.value || '';
+    const formattedValue = formatPhone(rawValue);
+
+    if (phoneRef.current) {
+      phoneRef.current.value = formattedValue;
+    }
+
+    onChange({
+      name: nameRef.current?.value || '',
+      email: emailRef.current?.value || '',
+      phone: formattedValue,
+      linkedin: linkedinRef.current?.value || '',
+      summary: summaryRef.current?.value || '',
+    });
+  };
 
   const getInputStyle = (value: string, required = false) => ({
     width: '100%',
     padding: '10px 12px',
-    border: required && !value ? '1px solid #ef4444' : `1px solid ${theme.border}`,
+    border:
+      required && !value ? '1px solid #ef4444' : `1px solid ${theme.border}`,
     borderRadius: '6px',
     fontSize: '14px',
     outline: 'none',
-    background: value ? (theme.inputBg === '#334155' ? '#64748b' : theme.inputBg) : theme.inputBg,
+    background: value
+      ? theme.inputBg === '#334155'
+        ? '#64748b'
+        : theme.inputBg
+      : theme.inputBg,
     color: theme.text,
-    transition: 'all 0.3s ease'
+    transition: 'all 0.3s ease',
   });
 
   return (
-    <div style={{
-      background: theme.cardBg,
-      border: `1px solid ${theme.border}`,
-      borderRadius: '8px',
-      padding: '24px',
-      transition: 'all 0.3s ease'
-    }}>
-      <h2 style={{
-        fontSize: '18px',
-        fontWeight: '600',
-        color: theme.text,
-        marginBottom: '20px'
-      }}>
+    <div
+      style={{
+        background: theme.cardBg,
+        border: `1px solid ${theme.border}`,
+        borderRadius: '8px',
+        padding: '24px',
+        transition: 'all 0.3s ease',
+      }}
+    >
+      <h2
+        style={{
+          fontSize: '18px',
+          fontWeight: '600',
+          color: theme.text,
+          marginBottom: '20px',
+        }}
+      >
         Informações Pessoais
       </h2>
-      
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '16px',
+          }}
+        >
           <div>
-            <label style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: theme.text,
-              marginBottom: '6px'
-            }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: theme.text,
+                marginBottom: '6px',
+              }}
+            >
               Nome Completo
             </label>
             <input
@@ -118,15 +135,17 @@ const handlePhoneInput = () => {
               placeholder="Seu nome completo"
             />
           </div>
-          
+
           <div>
-            <label style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: theme.text,
-              marginBottom: '6px'
-            }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: theme.text,
+                marginBottom: '6px',
+              }}
+            >
               Email
             </label>
             <input
@@ -138,16 +157,24 @@ const handlePhoneInput = () => {
             />
           </div>
         </div>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '16px',
+          }}
+        >
           <div>
-            <label style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: theme.text,
-              marginBottom: '6px'
-            }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: theme.text,
+                marginBottom: '6px',
+              }}
+            >
               Telefone
             </label>
             <input
@@ -158,15 +185,17 @@ const handlePhoneInput = () => {
               placeholder="(11) 99999-9999"
             />
           </div>
-          
+
           <div>
-            <label style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: theme.text,
-              marginBottom: '6px'
-            }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: theme.text,
+                marginBottom: '6px',
+              }}
+            >
               LinkedIn
             </label>
             <input
@@ -178,15 +207,17 @@ const handlePhoneInput = () => {
             />
           </div>
         </div>
-        
+
         <div>
-          <label style={{
-            display: 'block',
-            fontSize: '14px',
-            fontWeight: '500',
-            color: theme.text,
-            marginBottom: '6px'
-          }}>
+          <label
+            style={{
+              display: 'block',
+              fontSize: '14px',
+              fontWeight: '500',
+              color: theme.text,
+              marginBottom: '6px',
+            }}
+          >
             Resumo Profissional
           </label>
           <textarea
@@ -196,20 +227,24 @@ const handlePhoneInput = () => {
             rows={4}
             style={{
               ...getInputStyle(data.summary),
-              resize: 'none'
+              resize: 'none',
             }}
             placeholder="Breve descrição do seu histórico profissional e objetivos de carreira..."
           />
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: '6px'
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginTop: '6px',
+            }}
+          >
             <span style={{ fontSize: '12px', color: theme.text, opacity: 0.7 }}>
               Máximo 500 caracteres
             </span>
-            <span style={{ fontSize: '12px', color: theme.text, fontWeight: '500' }}>
+            <span
+              style={{ fontSize: '12px', color: theme.text, fontWeight: '500' }}
+            >
               {data.summary.length}/500
             </span>
           </div>

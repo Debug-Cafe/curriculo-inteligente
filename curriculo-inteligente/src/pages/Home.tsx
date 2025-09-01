@@ -19,12 +19,15 @@ export default function Home() {
   const [resume, setResume] = useState<Resume>({
     personalData: { name: '', email: '', phone: '', linkedin: '', summary: '' },
     skills: [],
-    experiences: []
+    experiences: [],
   });
   const [educations, setEducations] = useState<any[]>([]);
   const [objective, setObjective] = useState('');
   const [clearDialog, setClearDialog] = useState(false);
-  const [loadDialog, setLoadDialog] = useState<{ isOpen: boolean; resumes: any[] }>({ isOpen: false, resumes: [] });
+  const [loadDialog, setLoadDialog] = useState<{
+    isOpen: boolean;
+    resumes: any[];
+  }>({ isOpen: false, resumes: [] });
   const [template, setTemplate] = useState('modern');
   const [darkMode, setDarkMode] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -36,20 +39,27 @@ export default function Home() {
     if (educations.length > 0) step = 3;
     if (resume.skills.length > 0) step = 4;
     if (objective) step = 5;
-    if (resume.personalData.name && resume.experiences.length > 0 && educations.length > 0 && resume.skills.length > 0 && objective) step = 6;
+    if (
+      resume.personalData.name &&
+      resume.experiences.length > 0 &&
+      educations.length > 0 &&
+      resume.skills.length > 0 &&
+      objective
+    )
+      step = 6;
     return step;
   };
 
   const updatePersonalData = useCallback((personalData: PersonalData) => {
-    setResume(prev => ({ ...prev, personalData }));
+    setResume((prev) => ({ ...prev, personalData }));
   }, []);
 
   const updateSkills = useCallback((skills: Skill[]) => {
-    setResume(prev => ({ ...prev, skills }));
+    setResume((prev) => ({ ...prev, skills }));
   }, []);
 
   const updateExperiences = useCallback((experiences: Experience[]) => {
-    setResume(prev => ({ ...prev, experiences }));
+    setResume((prev) => ({ ...prev, experiences }));
   }, []);
 
   // Auto-save to localStorage
@@ -92,7 +102,7 @@ export default function Home() {
         }
       }
     };
-    
+
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [resume]);
@@ -137,9 +147,15 @@ export default function Home() {
 
   const handleConfirmClear = () => {
     setResume({
-      personalData: { name: '', email: '', phone: '', linkedin: '', summary: '' },
+      personalData: {
+        name: '',
+        email: '',
+        phone: '',
+        linkedin: '',
+        summary: '',
+      },
       skills: [],
-      experiences: []
+      experiences: [],
     });
     setEducations([]);
     setObjective('');
@@ -152,33 +168,33 @@ export default function Home() {
 
   const handleExportPDF = async () => {
     if (!previewRef.current) return;
-    
+
     try {
       const canvas = await html2canvas(previewRef.current, {
         scale: 2,
         useCORS: true,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
       });
-      
+
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const imgWidth = 210;
       const pageHeight = 295;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       let heightLeft = imgHeight;
-      
+
       let position = 0;
-      
+
       pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
-      
+
       while (heightLeft >= 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
         pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
       }
-      
+
       const fileName = resume.personalData.name || 'resume';
       pdf.save(`${fileName.replace(/\s+/g, '_')}_resume.pdf`);
     } catch (error) {
@@ -193,51 +209,61 @@ export default function Home() {
     text: darkMode ? '#f1f5f9' : '#1e293b',
     border: darkMode ? '#475569' : '#e2e8f0',
     headerBg: darkMode ? '#1e293b' : 'white',
-    inputBg: darkMode ? '#334155' : 'white'
+    inputBg: darkMode ? '#334155' : 'white',
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      background: theme.bg,
-      fontFamily: 'Inter, sans-serif',
-      transition: 'background-color 0.3s ease'
-    }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: theme.bg,
+        fontFamily: 'Inter, sans-serif',
+        transition: 'background-color 0.3s ease',
+      }}
+    >
       {/* Header */}
-      <div style={{
-        background: theme.headerBg,
-        borderBottom: `1px solid ${theme.border}`,
-        padding: '16px 0',
-        transition: 'all 0.3s ease'
-      }}>
-        <div style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          padding: '0 24px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
+      <div
+        style={{
+          background: theme.headerBg,
+          borderBottom: `1px solid ${theme.border}`,
+          padding: '16px 0',
+          transition: 'all 0.3s ease',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            padding: '0 24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           <div>
-            <h1 style={{
-              fontSize: '24px',
-              fontWeight: '600',
-              color: theme.text
-            }}>
-              Construtor de Currículo
+            <h1
+              style={{
+                fontSize: '24px',
+                fontWeight: '600',
+                color: theme.text,
+              }}
+            >
+              Você constrói sua história, nós te ajudamos a pôr no papel!
             </h1>
-            <p style={{
-              fontSize: '14px',
-              color: theme.text,
-              opacity: 0.7,
-              marginTop: '4px'
-            }}>
-              Bem-vindo, {user?.name}!
+            <p
+              style={{
+                fontSize: '14px',
+                color: theme.text,
+                opacity: 0.7,
+                marginTop: '4px',
+              }}
+            >
+              Use nosso criador de currículos • Bem-vindo, {user?.name}!
             </p>
           </div>
-          
+
           <div style={{ display: 'flex', gap: '12px' }}>
-            <button 
+            <button
               onClick={handleSave}
               style={{
                 padding: '8px 16px',
@@ -247,12 +273,12 @@ export default function Home() {
                 borderRadius: '6px',
                 fontSize: '14px',
                 fontWeight: '500',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
             >
               Salvar
             </button>
-            <button 
+            <button
               onClick={handleLoad}
               style={{
                 padding: '8px 16px',
@@ -262,12 +288,12 @@ export default function Home() {
                 borderRadius: '6px',
                 fontSize: '14px',
                 fontWeight: '500',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
             >
               Carregar
             </button>
-            <button 
+            <button
               onClick={handleClear}
               style={{
                 padding: '8px 16px',
@@ -277,7 +303,7 @@ export default function Home() {
                 borderRadius: '6px',
                 fontSize: '14px',
                 fontWeight: '500',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
             >
               Limpar
@@ -291,7 +317,7 @@ export default function Home() {
                 borderRadius: '6px',
                 color: theme.text,
                 cursor: 'pointer',
-                fontSize: '16px'
+                fontSize: '16px',
               }}
             >
               {darkMode ? '☀️' : '🌙'}
@@ -301,7 +327,7 @@ export default function Home() {
               onChange={setTemplate}
               theme={theme}
             />
-            <button 
+            <button
               onClick={handleExportPDF}
               style={{
                 padding: '8px 16px',
@@ -311,12 +337,12 @@ export default function Home() {
                 borderRadius: '6px',
                 fontSize: '14px',
                 fontWeight: '500',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
             >
               Exportar PDF
             </button>
-            <button 
+            <button
               onClick={logout}
               style={{
                 padding: '8px 16px',
@@ -326,7 +352,7 @@ export default function Home() {
                 borderRadius: '6px',
                 fontSize: '14px',
                 fontWeight: '500',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
             >
               Sair
@@ -336,21 +362,43 @@ export default function Home() {
       </div>
 
       {/* Content */}
-      <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '32px 24px',
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '32px'
-      }}>
+      <div
+        style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '32px 24px',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '32px',
+        }}
+      >
         {/* Forms */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <PersonalDataForm data={resume.personalData} onChange={updatePersonalData} theme={theme} />
-          <ExperienceForm experiences={resume.experiences} onChange={updateExperiences} theme={theme} />
-          <EducationForm educations={educations} onChange={setEducations} theme={theme} />
-          <SkillsForm skills={resume.skills} onChange={updateSkills} theme={theme} />
-          <ObjectivesForm objective={objective} onChange={setObjective} theme={theme} />
+          <PersonalDataForm
+            data={resume.personalData}
+            onChange={updatePersonalData}
+            theme={theme}
+          />
+          <ExperienceForm
+            experiences={resume.experiences}
+            onChange={updateExperiences}
+            theme={theme}
+          />
+          <EducationForm
+            educations={educations}
+            onChange={setEducations}
+            theme={theme}
+          />
+          <SkillsForm
+            skills={resume.skills}
+            onChange={updateSkills}
+            theme={theme}
+          />
+          <ObjectivesForm
+            objective={objective}
+            onChange={setObjective}
+            theme={theme}
+          />
         </div>
 
         {/* Preview */}
@@ -361,85 +409,96 @@ export default function Home() {
         </div>
       </div>
 
-
-      
-
-      
       {/* Fixed Progress Bar */}
-      <div style={{
-        position: 'fixed',
-        bottom: '20px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        background: theme.cardBg,
-        border: `1px solid ${theme.border}`,
-        borderRadius: '8px',
-        padding: '16px 24px',
-        maxWidth: '800px',
-        width: '90%',
-        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-        zIndex: 100
-      }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: '12px'
-        }}>
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: theme.cardBg,
+          border: `1px solid ${theme.border}`,
+          borderRadius: '8px',
+          padding: '16px 24px',
+          maxWidth: '800px',
+          width: '90%',
+          boxShadow:
+            '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+          zIndex: 100,
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '12px',
+          }}
+        >
           {[
             'Cabeçalho do currículo',
-            'Histórico profissional', 
+            'Histórico profissional',
             'Formação acadêmica',
             'Competências',
             'Objetivo',
-            'Finalizar'
+            'Finalizar',
           ].map((step, index) => (
-            <div key={step} style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              flex: '1'
-            }}>
-              <div style={{
-                width: '24px',
-                height: '24px',
-                minWidth: '24px',
-                minHeight: '24px',
-                borderRadius: '50%',
-                background: index < getProgressStep() ? '#3b82f6' : theme.border,
-                color: index < getProgressStep() ? 'white' : theme.text,
+            <div
+              key={step}
+              style={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '12px',
-                fontWeight: '500',
-                flexShrink: 0
-              }}>
+                gap: '8px',
+                flex: '1',
+              }}
+            >
+              <div
+                style={{
+                  width: '24px',
+                  height: '24px',
+                  minWidth: '24px',
+                  minHeight: '24px',
+                  borderRadius: '50%',
+                  background:
+                    index < getProgressStep() ? '#3b82f6' : theme.border,
+                  color: index < getProgressStep() ? 'white' : theme.text,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  fontWeight: '500',
+                  flexShrink: 0,
+                }}
+              >
                 {index + 1}
               </div>
-              <span style={{
-                fontSize: '12px',
-                color: index < getProgressStep() ? '#3b82f6' : theme.text,
-                fontWeight: index < getProgressStep() ? '500' : '400'
-              }}>
+              <span
+                style={{
+                  fontSize: '12px',
+                  color: index < getProgressStep() ? '#3b82f6' : theme.text,
+                  fontWeight: index < getProgressStep() ? '500' : '400',
+                }}
+              >
                 {step}
               </span>
               {index < 5 && (
-                <div style={{
-                  flex: '1',
-                  height: '2px',
-                  background: theme.border,
-                  marginLeft: '8px'
-                }} />
+                <div
+                  style={{
+                    flex: '1',
+                    height: '2px',
+                    background: theme.border,
+                    marginLeft: '8px',
+                  }}
+                />
               )}
             </div>
           ))}
         </div>
       </div>
-      
+
       {/* Spacer for fixed progress bar */}
       <div style={{ height: '120px' }} />
-      
+
       <ConfirmDialog
         isOpen={clearDialog}
         title="Limpar Currículo"
@@ -448,7 +507,7 @@ export default function Home() {
         onCancel={handleCancelClear}
         theme={theme}
       />
-      
+
       <LoadDialog
         isOpen={loadDialog.isOpen}
         resumes={loadDialog.resumes}

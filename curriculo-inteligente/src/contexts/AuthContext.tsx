@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 import type { User, LoginData, RegisterData } from '../types';
 import { authApi } from '../services/authApi';
 
@@ -19,7 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const token = localStorage.getItem('auth-token');
     const userData = localStorage.getItem('auth-user');
-    
+
     if (token && userData) {
       try {
         setUser(JSON.parse(userData));
