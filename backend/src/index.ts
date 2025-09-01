@@ -1,16 +1,16 @@
 import express from 'express';
 import cors from 'cors';
-import serverless from 'serverless-http';
+
 import { authRouter } from './routes/auth';
 import { resumesRouter } from './routes/resumes';
 import { usersRouter } from './routes/users';
 
 const app = express();
-const PORT = parseInt(process.env.PORT || '3000', 10);
+const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({
-  origin: ['https://seu-projeto.vercel.app', 'http://localhost:5173'],
+  origin: '*',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -35,22 +35,9 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   res.status(500).json({ message: 'Erro interno do servidor' });
 });
 
-// Para Railway e desenvolvimento
-const server = app.listen(PORT, '0.0.0.0', () => {
+// Iniciar servidor
+app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
-  console.log(`📋 Health check: http://localhost:${PORT}/health`);
-  console.log(`🌍 Ambiente: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📋 Health check disponível`);
 });
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('🛑 Recebido SIGTERM, fechando servidor...');
-  server.close(() => {
-    console.log('✅ Servidor fechado');
-    process.exit(0);
-  });
-});
-
-// Para Vercel (serverless)
-export default serverless(app);
 
