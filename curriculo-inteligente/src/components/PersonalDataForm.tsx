@@ -38,6 +38,36 @@ export default function PersonalDataForm({ data, onChange, theme }: Props) {
       summary: summaryRef.current?.value || ''
     });
   };
+const formatPhone = (value: string): string => {
+  const numbers = value.replace(/\D/g, '');
+  
+  if (numbers.length <= 2) {
+    return `(${numbers}`;
+  } else if (numbers.length <= 7) {
+    return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+  } else if (numbers.length <= 11) {
+    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
+  }
+  
+  return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
+};
+
+const handlePhoneInput = () => {
+  const rawValue = phoneRef.current?.value || '';
+  const formattedValue = formatPhone(rawValue);
+  
+  if (phoneRef.current) {
+    phoneRef.current.value = formattedValue;
+  }
+  
+  onChange({
+    name: nameRef.current?.value || '',
+    email: emailRef.current?.value || '',
+    phone: formattedValue,
+    linkedin: linkedinRef.current?.value || '',
+    summary: summaryRef.current?.value || ''
+  });
+};
 
   const getInputStyle = (value: string, required = false) => ({
     width: '100%',
@@ -123,7 +153,7 @@ export default function PersonalDataForm({ data, onChange, theme }: Props) {
             <input
               ref={phoneRef}
               type="tel"
-              onInput={handleInput}
+              onInput={handlePhoneInput}
               style={getInputStyle(data.phone)}
               placeholder="(11) 99999-9999"
             />
