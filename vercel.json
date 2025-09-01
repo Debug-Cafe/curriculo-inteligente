@@ -24,7 +24,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "curriculo-inteligente/dist/index.html"
+      "dest": "index.html"
     }
   ]
 }
