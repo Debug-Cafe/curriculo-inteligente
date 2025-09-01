@@ -1,6 +1,6 @@
 [[redirects]]
   from = "/api/*"
-  to = "https://seu-backend-production.up.railway.app/api/:splat"
+  to = "https://curriculo-inteligente-production.up.railway.app/api/:splat"
   status = 200
 
 [build]
