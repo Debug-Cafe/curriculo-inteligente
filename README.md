@@ -160,7 +160,10 @@ interface Resume {
 ```bash
 npm install
 ```
-
+  1.1 Na instalação do front, caso haja problema de conflito de versões
+  ```bash
+npm install --legacy-peer-deps 
+```
 ### 2. Configurar Variáveis de Ambiente
 ```bash
 # .env
