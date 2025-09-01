@@ -1,0 +1,11 @@
+node_modules
+.git
+*.log
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+backend/node_modules
+curriculo-inteligente/node_modules
+backend/dist
+curriculo-inteligente/dist
