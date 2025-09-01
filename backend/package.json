@@ -1,9 +1,9 @@
 {
   "name": "resume-backend",
   "version": "1.0.0",
-  "main": "dist/simple.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node dist/simple.js",
+    "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "vercel-build": "tsc",

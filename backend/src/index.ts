@@ -6,7 +6,7 @@ import { resumesRouter } from './routes/resumes';
 import { usersRouter } from './routes/users';
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = parseInt(process.env.PORT || '3001', 10);
 
 // Middleware
 app.use(cors({
@@ -36,8 +36,9 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 });
 
 // Iniciar servidor
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
-  console.log(`📋 Health check disponível`);
+  console.log(`📋 Health check disponível em /health`);
+  console.log(`🌍 Ambiente: ${process.env.NODE_ENV || 'development'}`);
 });
 
