@@ -251,7 +251,7 @@ export default function EducationForm({ educations, onChange, theme }: Props) {
           style={{
             width: '100%',
             padding: '12px',
-            background: '#3b82f6',
+            background: '#2563EB',
             color: 'white',
             border: 'none',
             borderRadius: '6px',

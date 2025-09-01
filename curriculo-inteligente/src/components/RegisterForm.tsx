@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import LogoBolo from '../assets/LogoBolo.png';
 
 interface Props {
   onToggleMode: () => void;
@@ -88,6 +89,16 @@ export default function RegisterForm({ onToggleMode, theme }: Props) {
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <img
+            src={LogoBolo}
+            alt="Logo Bolo"
+            style={{
+              height: '56px',
+              width: 'auto',
+              marginBottom: '20px',
+              opacity: 0.9,
+            }}
+          />
           <h1
             style={{
               fontSize: '28px',
@@ -228,7 +239,7 @@ export default function RegisterForm({ onToggleMode, theme }: Props) {
             style={{
               width: '100%',
               padding: '12px',
-              background: loading ? '#9ca3af' : '#3b82f6',
+              background: loading ? '#9ca3af' : '#2563EB',
               color: 'white',
               border: 'none',
               borderRadius: '8px',
@@ -252,7 +263,7 @@ export default function RegisterForm({ onToggleMode, theme }: Props) {
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#3b82f6',
+                color: '#2563EB',
                 fontSize: '14px',
                 fontWeight: '600',
                 cursor: 'pointer',
