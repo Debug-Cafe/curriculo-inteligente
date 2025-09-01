@@ -20,20 +20,26 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Servir arquivos estáticos do frontend
-app.use(express.static(path.join(__dirname, '../../curriculo-inteligente/dist')));
-
 // Rotas da API
 app.use('/api/auth', authRouter);
 app.use('/api/resumes', resumesRouter);
 app.use('/api/users', usersRouter);
 
-
-
 // Rota de health check
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
+
+// Servir arquivos estáticos do frontend
+const frontendPath = process.env.NODE_ENV === 'production' 
+  ? path.join(process.cwd(), 'curriculo-inteligente/dist')
+  : path.join(__dirname, '../../curriculo-inteligente/dist');
+
+console.log('Frontend path:', frontendPath);
+console.log('Current working directory:', process.cwd());
+console.log('__dirname:', __dirname);
+
+app.use(express.static(frontendPath));
 
 // Middleware de tratamento de erros
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -43,7 +49,10 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 // Servir o frontend para todas as rotas não-API (SPA routing)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../curriculo-inteligente/dist/index.html'));
+  const indexPath = process.env.NODE_ENV === 'production'
+    ? path.join(process.cwd(), 'curriculo-inteligente/dist/index.html')
+    : path.join(__dirname, '../../curriculo-inteligente/dist/index.html');
+  res.sendFile(indexPath);
 });
 
 // Para desenvolvimento local
