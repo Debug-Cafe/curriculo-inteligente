@@ -16,15 +16,22 @@ interface Props {
 }
 
 export default function SkillsForm({ skills, onChange, theme }: Props) {
-  const [newSkill, setNewSkill] = useState<{ name: string; level: 'Básico' | 'Intermediário' | 'Avançado' }>({ name: '', level: 'Básico' });
-  const [confirmDialog, setConfirmDialog] = useState<{ isOpen: boolean; skillId: string; skillName: string }>({ isOpen: false, skillId: '', skillName: '' });
+  const [newSkill, setNewSkill] = useState<{
+    name: string;
+    level: 'Básico' | 'Intermediário' | 'Avançado';
+  }>({ name: '', level: 'Básico' });
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    skillId: string;
+    skillName: string;
+  }>({ isOpen: false, skillId: '', skillName: '' });
 
   const addSkill = () => {
     if (newSkill.name.trim()) {
       const skill: Skill = {
         id: Date.now().toString(),
         name: newSkill.name.trim(),
-        level: newSkill.level
+        level: newSkill.level,
       };
       onChange([...skills, skill]);
       setNewSkill({ name: '', level: 'Básico' });
@@ -36,7 +43,7 @@ export default function SkillsForm({ skills, onChange, theme }: Props) {
   };
 
   const handleConfirmRemove = () => {
-    onChange(skills.filter(skill => skill.id !== confirmDialog.skillId));
+    onChange(skills.filter((skill) => skill.id !== confirmDialog.skillId));
     setConfirmDialog({ isOpen: false, skillId: '', skillName: '' });
   };
 
@@ -46,29 +53,37 @@ export default function SkillsForm({ skills, onChange, theme }: Props) {
 
   const getLevelColor = (level: string) => {
     switch (level) {
-      case 'Básico': return { background: '#fef3c7', color: '#92400e' };
-      case 'Intermediário': return { background: '#dbeafe', color: '#1e40af' };
-      case 'Avançado': return { background: '#d1fae5', color: '#065f46' };
-      default: return { background: '#f3f4f6', color: '#374151' };
+      case 'Básico':
+        return { background: '#fef3c7', color: '#92400e' };
+      case 'Intermediário':
+        return { background: '#dbeafe', color: '#1e40af' };
+      case 'Avançado':
+        return { background: '#d1fae5', color: '#065f46' };
+      default:
+        return { background: '#f3f4f6', color: '#374151' };
     }
   };
 
   return (
-    <div style={{
-      background: theme.cardBg,
-      border: `1px solid ${theme.border}`,
-      borderRadius: '8px',
-      padding: '24px'
-    }}>
-      <h2 style={{
-        fontSize: '18px',
-        fontWeight: '600',
-        color: theme.text,
-        marginBottom: '20px'
-      }}>
+    <div
+      style={{
+        background: theme.cardBg,
+        border: `1px solid ${theme.border}`,
+        borderRadius: '8px',
+        padding: '24px',
+      }}
+    >
+      <h2
+        style={{
+          fontSize: '18px',
+          fontWeight: '600',
+          color: theme.text,
+          marginBottom: '20px',
+        }}
+      >
         Habilidades
       </h2>
-      
+
       <div style={{ marginBottom: '20px' }}>
         <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
           <input
@@ -84,14 +99,26 @@ export default function SkillsForm({ skills, onChange, theme }: Props) {
               borderRadius: '6px',
               fontSize: '14px',
               outline: 'none',
-              background: newSkill.name ? (theme.inputBg === '#334155' ? '#64748b' : theme.inputBg) : theme.inputBg,
-              color: theme.text
+              background: newSkill.name
+                ? theme.inputBg === '#334155'
+                  ? '#64748b'
+                  : theme.inputBg
+                : theme.inputBg,
+              color: theme.text,
             }}
           />
-          
+
           <select
             value={newSkill.level}
-            onChange={(e) => setNewSkill({ ...newSkill, level: e.target.value as 'Básico' | 'Intermediário' | 'Avançado' })}
+            onChange={(e) =>
+              setNewSkill({
+                ...newSkill,
+                level: e.target.value as
+                  | 'Básico'
+                  | 'Intermediário'
+                  | 'Avançado',
+              })
+            }
             style={{
               padding: '10px 12px',
               border: `1px solid ${theme.border}`,
@@ -99,15 +126,16 @@ export default function SkillsForm({ skills, onChange, theme }: Props) {
               fontSize: '14px',
               outline: 'none',
               minWidth: '120px',
-              background: theme.inputBg === '#334155' ? '#64748b' : theme.inputBg,
-              color: theme.text
+              background:
+                theme.inputBg === '#334155' ? '#64748b' : theme.inputBg,
+              color: theme.text,
             }}
           >
             <option value="Básico">Básico</option>
             <option value="Intermediário">Intermediário</option>
             <option value="Avançado">Avançado</option>
           </select>
-          
+
           <button
             onClick={addSkill}
             style={{
@@ -118,50 +146,69 @@ export default function SkillsForm({ skills, onChange, theme }: Props) {
               borderRadius: '6px',
               fontSize: '14px',
               fontWeight: '500',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
             Adicionar
           </button>
         </div>
       </div>
-      
+
       {skills.length === 0 ? (
-        <div style={{
-          border: `2px dashed ${theme.border}`,
-          borderRadius: '8px',
-          padding: '32px',
-          textAlign: 'center',
-          color: theme.text,
-          opacity: 0.7
-        }}>
+        <div
+          style={{
+            border: `2px dashed ${theme.border}`,
+            borderRadius: '8px',
+            padding: '32px',
+            textAlign: 'center',
+            color: theme.text,
+            opacity: 0.7,
+          }}
+        >
           <div style={{ fontSize: '24px', marginBottom: '8px' }}>⚡</div>
-          <p style={{ fontSize: '14px', marginBottom: '4px' }}>Nenhuma habilidade adicionada</p>
-          <p style={{ fontSize: '12px', color: theme.text, opacity: 0.6 }}>Adicione suas principais competências</p>
+          <p style={{ fontSize: '14px', marginBottom: '4px' }}>
+            Nenhuma habilidade adicionada
+          </p>
+          <p style={{ fontSize: '12px', color: theme.text, opacity: 0.6 }}>
+            Adicione suas principais competências
+          </p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {skills.map((skill) => (
-            <div key={skill.id} style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '12px 16px',
-              border: `1px solid ${theme.border}`,
-              borderRadius: '8px',
-              background: theme.inputBg
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{ fontSize: '14px', fontWeight: '500', color: theme.text }}>
+            <div
+              key={skill.id}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '12px 16px',
+                border: `1px solid ${theme.border}`,
+                borderRadius: '8px',
+                background: theme.inputBg,
+              }}
+            >
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+              >
+                <span
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: theme.text,
+                  }}
+                >
                   {skill.name}
                 </span>
-                <span style={{
-                  ...getLevelColor(skill.level),
-                  padding: '4px 8px',
-                  borderRadius: '12px',
-                  fontSize: '12px',
-                  fontWeight: '500'
-                }}>
+                <span
+                  style={{
+                    ...getLevelColor(skill.level),
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    fontWeight: '500',
+                  }}
+                >
                   {skill.level}
                 </span>
               </div>
@@ -173,7 +220,7 @@ export default function SkillsForm({ skills, onChange, theme }: Props) {
                   color: theme.text,
                   opacity: 0.6,
                   cursor: 'pointer',
-                  fontSize: '14px'
+                  fontSize: '14px',
                 }}
               >
                 Remover
@@ -182,7 +229,7 @@ export default function SkillsForm({ skills, onChange, theme }: Props) {
           ))}
         </div>
       )}
-      
+
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}
         title="Remover Habilidade"
