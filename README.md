@@ -4,10 +4,17 @@ Sistema completo para criação de currículos profissionais com múltiplos temp
 
 ## 🚀 Tecnologias
 
+### Frontend
 - **React 18** + **TypeScript** + **Vite**
 - **CSS Inline** (sem frameworks CSS)
 - **Context API** para gerenciamento de estado
 - **Fetch API** para requisições HTTP
+
+### Backend
+- **Node.js** + **TypeScript**
+- **Express.js** para API REST
+- **JWT** para autenticação
+- **Middleware** de segurança
 
 ## 📋 Funcionalidades
 
@@ -56,16 +63,32 @@ Sistema completo para criação de currículos profissionais com múltiplos temp
 
 ## 🏗️ Arquitetura
 
-### Estrutura de Pastas
+### Estrutura do Projeto
 ```
-src/
-├── assets/             # Imagens e recursos
-├── components/         # Componentes reutilizáveis
-├── contexts/          # Context API (Auth)
-├── pages/             # Páginas principais
-├── services/          # APIs e integrações
-├── types/             # TypeScript interfaces
-└── main.tsx          # Entry point
+curriculo-inteligente/
+├── backend/                    # API Node.js + TypeScript
+│   ├── src/
+│   │   ├── middleware/         # Middlewares (auth, cors, etc)
+│   │   ├── routes/            # Rotas da API
+│   │   ├── types/             # Interfaces TypeScript
+│   │   ├── utils/             # Utilitários
+│   │   └── index.ts           # Entry point do servidor
+│   ├── .env.example           # Variáveis de ambiente exemplo
+│   ├── package.json
+│   └── tsconfig.json
+├── curriculo-inteligente/      # Frontend React + TypeScript
+│   ├── src/
+│   │   ├── assets/            # Imagens e recursos
+│   │   ├── components/        # Componentes reutilizáveis
+│   │   ├── contexts/          # Context API (Auth)
+│   │   ├── pages/             # Páginas principais
+│   │   ├── services/          # APIs e integrações
+│   │   ├── types/             # TypeScript interfaces
+│   │   └── main.tsx           # Entry point
+│   ├── .env.example           # Variáveis de ambiente exemplo
+│   ├── package.json
+│   └── vite.config.ts
+└── .gitignore                  # Gitignore principal
 ```
 
 ### Componentes Principais
@@ -176,32 +199,60 @@ interface Resume {
 
 ## ⚙️ Configuração e Instalação
 
-### 1. Instalar Dependências
+### 1. Clonar o Repositório
 ```bash
+git clone <repository-url>
+cd curriculo-inteligente
+```
+
+### 2. Configurar Backend
+```bash
+cd backend
 npm install
-```
-  1.1 Na instalação do front, caso haja problema de conflito de versões
-  ```bash
-npm install --legacy-peer-deps 
+
+# Configurar variáveis de ambiente
+cp src/.env.example .env
+# Editar .env com suas configurações:
+# PORT=3001
+# JWT_SECRET=seu_jwt_secret_aqui
 ```
 
-### 2. Configurar Variáveis de Ambiente
+### 3. Configurar Frontend
 ```bash
-# Copie o arquivo de exemplo
+cd ../curriculo-inteligente
+npm install
+
+# Em caso de conflito de versões
+npm install --legacy-peer-deps
+
+# Configurar variáveis de ambiente
 cp .env.example .env
-
-# Edite as variáveis conforme necessário
-# .env
-VITE_API_URL=http://localhost:3001/api
+# Editar .env:
+# VITE_API_URL=http://localhost:3001/api
 ```
 
-### 3. Executar em Desenvolvimento
+### 4. Executar em Desenvolvimento
+
+**Terminal 1 - Backend:**
 ```bash
+cd backend
 npm run dev
 ```
 
-### 4. Build para Produção
+**Terminal 2 - Frontend:**
 ```bash
+cd curriculo-inteligente
+npm run dev
+```
+
+### 5. Build para Produção
+```bash
+# Backend
+cd backend
+npm run build
+
+# Frontend
+cd ../curriculo-inteligente
 npm run build
 ```
 
@@ -272,10 +323,25 @@ app.delete('/api/resumes/:id', authMiddleware, resumeController.delete);
 
 ## 🔒 Segurança
 
-- Arquivo `.env` não versionado
-- Tokens JWT para autenticação
-- Validação de dados no frontend e backend
-- CORS configurado adequadamente
+- **Arquivos `.env` não versionados** (protegidos pelo .gitignore)
+- **Tokens JWT** para autenticação segura
+- **Validação de dados** no frontend e backend
+- **CORS configurado** adequadamente
+- **Middleware de autenticação** no backend
+- **Histórico limpo** - arquivos sensíveis removidos do git
+
+## 📁 Arquivos Importantes
+
+### Configuração
+- `.env.example` - Template de variáveis de ambiente
+- `.gitignore` - Proteção de arquivos sensíveis
+- `tsconfig.json` - Configuração TypeScript
+- `vite.config.ts` - Configuração do Vite
+
+### Desenvolvimento
+- `package.json` - Dependências e scripts
+- `nodemon.json` - Configuração do nodemon (backend)
+- `.prettierrc` - Formatação de código
 
 ---
 
