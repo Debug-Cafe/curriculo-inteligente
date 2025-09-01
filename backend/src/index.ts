@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import path from 'path';
 import serverless from 'serverless-http';
 import { authRouter } from './routes/auth';
 import { resumesRouter } from './routes/resumes';
@@ -30,19 +29,15 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Servir arquivos estáticos do frontend
-const frontendPath = path.join(__dirname, '../curriculo-inteligente/dist');
-app.use(express.static(frontendPath));
-
 // Middleware de tratamento de erros
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Erro interno do servidor' });
 });
 
-// Servir o frontend para todas as rotas não-API (SPA routing)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../curriculo-inteligente/dist/index.html'));
+// Middleware para rotas não encontradas
+app.use('*', (req, res) => {
+  res.status(404).json({ message: 'Rota não encontrada' });
 });
 
 // Para desenvolvimento local
