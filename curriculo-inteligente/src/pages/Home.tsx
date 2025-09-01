@@ -9,6 +9,7 @@ import ResumePreview from '../components/ResumePreview';
 import ConfirmDialog from '../components/ConfirmDialog';
 import LoadDialog from '../components/LoadDialog';
 import TemplateSelector from '../components/TemplateSelector';
+import Toast from '../components/Toast';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../services/api';
 import jsPDF from 'jspdf';
@@ -31,6 +32,7 @@ export default function Home() {
   }>({ isOpen: false, resumes: [] });
   const [template, setTemplate] = useState('modern');
   const [darkMode, setDarkMode] = useState(false);
+  const [toast, setToast] = useState({ message: '', type: 'success' as 'success' | 'error', isVisible: false });
   const previewRef = useRef<HTMLDivElement>(null);
 
   const getProgressStep = () => {
@@ -114,8 +116,10 @@ export default function Home() {
       const resumeWithUser = { ...resume, userId: user?.id };
       const savedResume = await api.saveResume(resumeWithUser);
       setResume(savedResume);
+      setToast({ message: 'Seu currículo foi salvo com sucesso!', type: 'success', isVisible: true });
     } catch (error) {
       console.error(error);
+      setToast({ message: 'Erro ao salvar currículo. Tente novamente.', type: 'error', isVisible: true });
     }
   };
 
@@ -526,6 +530,13 @@ export default function Home() {
         onLoad={handleConfirmLoad}
         onCancel={handleCancelLoad}
         theme={theme}
+      />
+
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
       />
     </div>
   );
