@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import serverless from 'serverless-http';
 import { authRouter } from './routes/auth';
 import { resumesRouter } from './routes/resumes';
@@ -19,7 +20,10 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Rotas
+// Servir arquivos estáticos do frontend
+app.use(express.static(path.join(__dirname, '../../curriculo-inteligente/dist')));
+
+// Rotas da API
 app.use('/api/auth', authRouter);
 app.use('/api/resumes', resumesRouter);
 app.use('/api/users', usersRouter);
@@ -37,9 +41,9 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   res.status(500).json({ message: 'Erro interno do servidor' });
 });
 
-// Middleware para rotas não encontradas
-app.use('*', (req, res) => {
-  res.status(404).json({ message: 'Rota não encontrada' });
+// Servir o frontend para todas as rotas não-API (SPA routing)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../curriculo-inteligente/dist/index.html'));
 });
 
 // Para desenvolvimento local
