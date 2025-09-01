@@ -1,6 +1,7 @@
 # Currículo Inteligente
 
 Sistema completo para criação de currículos profissionais com múltiplos templates, autenticação de usuários e integração backend.
+Acesse o deploy da nossa aplicação em: https://curriculo-inteligente.netlify.app/
 
 ## 🚀 Tecnologias
 
