@@ -1,7 +1,7 @@
 import express from 'express';
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = parseInt(process.env.PORT || '3001', 10);
 
 console.log('🔧 PORT do Railway:', process.env.PORT);
 console.log('🔧 PORT que será usada:', PORT);
