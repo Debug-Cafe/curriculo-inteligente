@@ -21,22 +21,29 @@ export default function Toast({ message, type, isVisible, onClose }: ToastProps)
 
   return (
     <div
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
       style={{
         position: 'fixed',
-        top: '20px',
-        right: '20px',
-        background: type === 'success' ? '#4E6709' : '#C81E3A',
+        top: '24px',
+        right: '24px',
+        background: type === 'success' 
+          ? 'linear-gradient(135deg, var(--caramel), var(--toffee))' 
+          : 'linear-gradient(135deg, var(--error), #b91c1c)',
         color: 'white',
-        padding: '12px 20px',
-        borderRadius: '8px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        padding: '16px 24px',
+        borderRadius: '12px',
+        boxShadow: 'var(--shadow-lg)',
         zIndex: 1000,
         display: 'flex',
         alignItems: 'center',
-        gap: '8px',
+        gap: '12px',
         fontSize: '14px',
-        fontWeight: '500',
-        animation: 'slideIn 0.3s ease-out',
+        fontWeight: '600',
+        animation: 'slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
       }}
     >
       <span>{type === 'success' ? '✓' : '✗'}</span>
@@ -45,11 +52,11 @@ export default function Toast({ message, type, isVisible, onClose }: ToastProps)
         {`
           @keyframes slideIn {
             from {
-              transform: translateX(100%);
+              transform: translateX(100%) scale(0.9);
               opacity: 0;
             }
             to {
-              transform: translateX(0);
+              transform: translateX(0) scale(1);
               opacity: 1;
             }
           }

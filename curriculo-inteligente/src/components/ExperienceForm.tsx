@@ -318,16 +318,9 @@ export default function ExperienceForm({
 
         <button
           onClick={addExperience}
+          className="btn-primary"
           style={{
             width: '100%',
-            padding: '12px',
-            background: '#2563EB',
-            color: 'white',
-            border: 'none',
-            borderRadius: '6px',
-            fontSize: '14px',
-            fontWeight: '500',
-            cursor: 'pointer',
           }}
         >
           Adicionar Experiência

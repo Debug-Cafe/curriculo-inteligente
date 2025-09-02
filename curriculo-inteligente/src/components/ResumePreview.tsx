@@ -2,7 +2,7 @@ import type { Resume } from '../types';
 
 interface Props {
   resume: Resume;
-  template: 'modern' | 'classic' | 'creative';
+  template: 'modern' | 'classic' | 'creative' | 'minimal' | 'professional' | 'elegant';
   theme: {
     bg: string;
     cardBg: string;
@@ -19,38 +19,38 @@ export default function ResumePreview({ resume, template, theme }: Props) {
     switch (template) {
       case 'classic':
         return {
-          headerBg: '#2c3e50',
-          accentColor: '#34495e',
-          font: 'serif',
+          headerBg: 'var(--espresso)',
+          accentColor: 'var(--cinnamon)',
+          font: 'Georgia, serif',
         };
       case 'creative':
         return {
-          headerBg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          accentColor: '#667eea',
-          font: 'sans-serif',
+          headerBg: 'linear-gradient(135deg, #d2691e 0%, #ff6347 50%, #ffa500 100%)',
+          accentColor: '#ff6347',
+          font: 'Inter, sans-serif',
         };
       case 'minimal':
         return {
-          headerBg: '#64748b',
-          accentColor: '#475569',
+          headerBg: 'var(--cinnamon)',
+          accentColor: 'var(--toffee)',
           font: 'Inter, sans-serif',
         };
       case 'professional':
         return {
-          headerBg: '#1f2937',
-          accentColor: '#059669',
+          headerBg: 'linear-gradient(135deg, var(--espresso) 0%, #4a2a1c 100%)',
+          accentColor: 'var(--cinnamon)',
           font: 'system-ui, sans-serif',
         };
       case 'elegant':
         return {
-          headerBg: 'linear-gradient(135deg, #1f2937 0%, #374151 100%)',
-          accentColor: '#dc2626',
+          headerBg: 'linear-gradient(135deg, var(--espresso) 0%, var(--cinnamon) 100%)',
+          accentColor: 'var(--error)',
           font: 'Georgia, serif',
         };
       default: // modern
         return {
-          headerBg: theme.cardBg,
-          accentColor: '#3b82f6',
+          headerBg: 'linear-gradient(135deg, var(--cinnamon) 0%, var(--caramel) 100%)',
+          accentColor: 'var(--accent)',
           font: 'Inter, sans-serif',
         };
     }
@@ -95,21 +95,27 @@ export default function ResumePreview({ resume, template, theme }: Props) {
           background: theme.bg,
           border: `1px solid ${theme.border}`,
           borderRadius: '8px',
-          padding: '32px',
-          minHeight: '600px',
-          fontFamily: templateStyles.font,
-          transform: 'scale(0.95)',
-          transformOrigin: 'top left',
-          transition: 'transform 0.3s ease',
         }}
       >
+        <div
+          id="resume-content"
+          style={{
+            padding: '32px',
+            minHeight: '600px',
+            fontFamily: templateStyles.font,
+            transform: 'scale(0.95)',
+            transformOrigin: 'top left',
+            transition: 'transform 0.3s ease',
+            WebkitPrintColorAdjust: 'exact',
+            colorAdjust: 'exact',
+            WebkitBackfaceVisibility: 'hidden',
+            backfaceVisibility: 'hidden',
+          }}
+        >
         {/* Header */}
         <div
           style={{
-            background:
-              template === 'modern'
-                ? `linear-gradient(135deg, ${templateStyles.accentColor}, #8b5cf6)`
-                : templateStyles.headerBg,
+            background: templateStyles.headerBg,
             color: 'white',
             padding: '24px',
             borderRadius: '8px',
@@ -154,7 +160,7 @@ export default function ResumePreview({ resume, template, theme }: Props) {
               style={{
                 fontSize: '18px',
                 fontWeight: '600',
-                color: theme.text === '#f1f5f9' ? '#e2e8f0' : '#2c3e50',
+                color: 'var(--text-primary)',
                 marginBottom: '12px',
                 borderBottom: `2px solid ${templateStyles.accentColor}`,
                 paddingBottom: '4px',
@@ -165,7 +171,7 @@ export default function ResumePreview({ resume, template, theme }: Props) {
             <p
               style={{
                 fontSize: '14px',
-                color: theme.text === '#f1f5f9' ? '#e2e8f0' : '#34495e',
+                color: 'var(--text-secondary)',
                 lineHeight: '1.6',
                 fontStyle: template === 'classic' ? 'italic' : 'normal',
               }}
@@ -182,7 +188,7 @@ export default function ResumePreview({ resume, template, theme }: Props) {
               style={{
                 fontSize: '18px',
                 fontWeight: '600',
-                color: theme.text === '#f1f5f9' ? '#e2e8f0' : '#2c3e50',
+                color: 'var(--text-primary)',
                 marginBottom: '12px',
                 borderBottom: `2px solid ${templateStyles.accentColor}`,
                 paddingBottom: '4px',
@@ -204,22 +210,18 @@ export default function ResumePreview({ resume, template, theme }: Props) {
                     padding: template === 'creative' ? '8px 16px' : '6px 12px',
                     background:
                       template === 'creative'
-                        ? 'linear-gradient(45deg, #667eea, #764ba2)'
-                        : template === 'classic'
-                          ? '#ecf0f1'
-                          : '#f1f5f9',
+                        ? 'linear-gradient(45deg, #ff6347, #ffa500)'
+                        : 'var(--surface-alt)',
                     color:
                       template === 'creative'
                         ? 'white'
-                        : theme.text === '#f1f5f9'
-                          ? '#e2e8f0'
-                          : '#2c3e50',
+                        : 'var(--text-primary)',
                     borderRadius: template === 'creative' ? '20px' : '16px',
                     fontSize: '13px',
                     fontWeight: '500',
                     boxShadow:
                       template === 'creative'
-                        ? '0 2px 8px rgba(102, 126, 234, 0.3)'
+                        ? '0 2px 8px rgba(255, 99, 71, 0.3)'
                         : 'none',
                   }}
                 >
@@ -237,7 +239,7 @@ export default function ResumePreview({ resume, template, theme }: Props) {
               style={{
                 fontSize: '18px',
                 fontWeight: '600',
-                color: theme.text === '#f1f5f9' ? '#e2e8f0' : '#2c3e50',
+                color: 'var(--text-primary)',
                 marginBottom: '12px',
                 borderBottom: `2px solid ${templateStyles.accentColor}`,
                 paddingBottom: '4px',
@@ -264,7 +266,7 @@ export default function ResumePreview({ resume, template, theme }: Props) {
                         top: '8px',
                         width: '12px',
                         height: '12px',
-                        background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                        background: 'linear-gradient(45deg, #ff6347, #ffa500)',
                         borderRadius: '50%',
                       }}
                     ></div>
@@ -283,8 +285,7 @@ export default function ResumePreview({ resume, template, theme }: Props) {
                         style={{
                           fontSize: '16px',
                           fontWeight: '600',
-                          color:
-                            theme.text === '#f1f5f9' ? '#e2e8f0' : '#2c3e50',
+                          color: 'var(--text-primary)',
                         }}
                       >
                         {exp.position}
@@ -302,11 +303,11 @@ export default function ResumePreview({ resume, template, theme }: Props) {
                     <span
                       style={{
                         fontSize: '12px',
-                        color: theme.text === '#f1f5f9' ? '#cbd5e1' : '#7f8c8d',
+                        color: 'var(--text-muted)',
                         background:
                           template === 'creative'
-                            ? 'rgba(102, 126, 234, 0.1)'
-                            : '#f8f9fa',
+                            ? 'rgba(255, 99, 71, 0.1)'
+                            : 'var(--surface-alt)',
                         padding: '4px 8px',
                         borderRadius: '4px',
                       }}
@@ -326,7 +327,7 @@ export default function ResumePreview({ resume, template, theme }: Props) {
                     <p
                       style={{
                         fontSize: '14px',
-                        color: theme.text === '#f1f5f9' ? '#e2e8f0' : '#34495e',
+                        color: 'var(--text-secondary)',
                         lineHeight: '1.5',
                       }}
                     >
@@ -347,7 +348,7 @@ export default function ResumePreview({ resume, template, theme }: Props) {
               style={{
                 textAlign: 'center',
                 padding: '64px 32px',
-                color: theme.text === '#f1f5f9' ? '#e2e8f0' : '#94a3b8',
+                color: 'var(--text-muted)',
                 opacity: 0.7,
               }}
             >
@@ -366,6 +367,7 @@ export default function ResumePreview({ resume, template, theme }: Props) {
               </p>
             </div>
           )}
+        </div>
       </div>
     </div>
   );

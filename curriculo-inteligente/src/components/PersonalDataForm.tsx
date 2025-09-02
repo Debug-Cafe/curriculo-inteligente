@@ -71,19 +71,7 @@ export default function PersonalDataForm({ data, onChange, theme }: Props) {
 
   const getInputStyle = (value: string, required = false) => ({
     width: '100%',
-    padding: '10px 12px',
-    border:
-      required && !value ? '1px solid #ef4444' : `1px solid ${theme.border}`,
-    borderRadius: '6px',
-    fontSize: '14px',
-    outline: 'none',
-    background: value
-      ? theme.inputBg === '#334155'
-        ? '#64748b'
-        : theme.inputBg
-      : theme.inputBg,
-    color: theme.text,
-    transition: 'all 0.3s ease',
+    border: required && !value ? '1px solid #dc2626' : undefined,
   });
 
   return (

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import LogoBolo from '../assets/LogoBolo.png';
+import logo from '../assets/logo.png';
 
 interface Props {
   onToggleMode: () => void;
@@ -35,14 +35,6 @@ export default function LoginForm({ onToggleMode, theme }: Props) {
 
   const inputStyle = {
     width: '100%',
-    padding: '12px 16px',
-    border: `1px solid ${theme.border}`,
-    borderRadius: '8px',
-    fontSize: '14px',
-    outline: 'none',
-    background: theme.inputBg,
-    color: theme.text,
-    transition: 'all 0.3s ease',
   };
 
   return (
@@ -69,8 +61,8 @@ export default function LoginForm({ onToggleMode, theme }: Props) {
       >
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <img
-            src={LogoBolo}
-            alt="Logo Bolo"
+            src={logo}
+            alt="Logo"
             style={{
               height: '56px',
               width: 'auto',
@@ -167,17 +159,11 @@ export default function LoginForm({ onToggleMode, theme }: Props) {
           <button
             type="submit"
             disabled={loading}
+            className="btn-primary"
             style={{
               width: '100%',
-              padding: '12px',
-              background: loading ? '#9ca3af' : '#2563EB',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: '600',
+              background: loading ? 'color-mix(in oklab, #603010 50%, #e0c0b0)' : undefined,
               cursor: loading ? 'not-allowed' : 'pointer',
-              transition: 'all 0.2s ease',
               marginBottom: '16px',
             }}
           >
@@ -194,7 +180,7 @@ export default function LoginForm({ onToggleMode, theme }: Props) {
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#2563EB',
+                color: '#c07040',
                 fontSize: '14px',
                 fontWeight: '600',
                 cursor: 'pointer',

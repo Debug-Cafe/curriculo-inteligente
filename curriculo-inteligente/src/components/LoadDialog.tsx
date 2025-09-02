@@ -158,12 +158,12 @@ export default function LoadDialog({
                   onClick={() => setSelectedId(resume.id)}
                   style={{
                     padding: '12px 16px',
-                    border: `1px solid ${selectedId === resume.id ? '#3b82f6' : theme.border}`,
+                    border: `1px solid ${selectedId === resume.id ? '#c07040' : theme.border}`,
                     borderRadius: '8px',
                     marginBottom: '8px',
                     cursor: 'pointer',
                     background:
-                      selectedId === resume.id ? '#eff6ff' : 'transparent',
+                      selectedId === resume.id ? '#e0c0b0' : 'transparent',
                     transition: 'all 0.2s ease',
                   }}
                 >
@@ -202,7 +202,7 @@ export default function LoadDialog({
                           width: '20px',
                           height: '20px',
                           borderRadius: '50%',
-                          background: '#3b82f6',
+                          background: '#c07040',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -229,17 +229,7 @@ export default function LoadDialog({
         >
           <button
             onClick={handleCancel}
-            style={{
-              padding: '10px 20px',
-              background: 'transparent',
-              border: `1px solid ${theme.border}`,
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: theme.text,
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
+            className="btn-outline"
           >
             Cancelar
           </button>
@@ -247,17 +237,11 @@ export default function LoadDialog({
             <button
               onClick={handleLoad}
               disabled={!selectedId}
+              className="btn-primary"
               style={{
-                padding: '10px 20px',
-                background: selectedId ? '#3b82f6' : theme.border,
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '500',
-                color: 'white',
+                background: selectedId ? undefined : 'color-mix(in oklab, #603010 50%, #e0c0b0)',
                 cursor: selectedId ? 'pointer' : 'not-allowed',
                 opacity: selectedId ? 1 : 0.6,
-                transition: 'all 0.2s ease',
               }}
             >
               Carregar

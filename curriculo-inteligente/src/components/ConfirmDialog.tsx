@@ -128,33 +128,13 @@ export default function ConfirmDialog({
         >
           <button
             onClick={handleCancel}
-            style={{
-              padding: '10px 20px',
-              background: 'transparent',
-              border: `1px solid ${theme.border}`,
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: theme.text,
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
+            className="btn-outline"
           >
             Cancelar
           </button>
           <button
             onClick={handleConfirm}
-            style={{
-              padding: '10px 20px',
-              background: '#ef4444',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: 'white',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
+            className="btn-danger"
           >
             Remover
           </button>
