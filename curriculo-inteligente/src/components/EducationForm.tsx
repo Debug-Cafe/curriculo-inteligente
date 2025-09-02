@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { generateId } from '../utils/helpers';
 import ConfirmDialog from './ConfirmDialog';
 
 interface Education {
@@ -42,7 +43,7 @@ export default function EducationForm({ educations, onChange, theme }: Props) {
   const addEducation = () => {
     if (newEdu.institution.trim() && newEdu.degree.trim()) {
       const education: Education = {
-        id: Date.now().toString(),
+        id: generateId(),
         ...newEdu,
         institution: newEdu.institution.trim(),
         degree: newEdu.degree.trim(),
@@ -248,16 +249,9 @@ export default function EducationForm({ educations, onChange, theme }: Props) {
 
         <button
           onClick={addEducation}
+          className="btn-primary"
           style={{
             width: '100%',
-            padding: '12px',
-            background: '#2563EB',
-            color: 'white',
-            border: 'none',
-            borderRadius: '6px',
-            fontSize: '14px',
-            fontWeight: '500',
-            cursor: 'pointer',
           }}
         >
           Adicionar Educação

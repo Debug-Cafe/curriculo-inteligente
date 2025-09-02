@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Skill } from '../types';
+import { generateId } from '../utils/helpers';
 import ConfirmDialog from './ConfirmDialog';
 
 interface Props {
@@ -29,7 +30,7 @@ export default function SkillsForm({ skills, onChange, theme }: Props) {
   const addSkill = () => {
     if (newSkill.name.trim()) {
       const skill: Skill = {
-        id: Date.now().toString(),
+        id: generateId(),
         name: newSkill.name.trim(),
         level: newSkill.level,
       };
@@ -94,17 +95,6 @@ export default function SkillsForm({ skills, onChange, theme }: Props) {
             onKeyPress={(e) => e.key === 'Enter' && addSkill()}
             style={{
               flex: '1',
-              padding: '10px 12px',
-              border: `1px solid ${theme.border}`,
-              borderRadius: '6px',
-              fontSize: '14px',
-              outline: 'none',
-              background: newSkill.name
-                ? theme.inputBg === '#334155'
-                  ? '#64748b'
-                  : theme.inputBg
-                : theme.inputBg,
-              color: theme.text,
             }}
           />
 
@@ -120,15 +110,7 @@ export default function SkillsForm({ skills, onChange, theme }: Props) {
               })
             }
             style={{
-              padding: '10px 12px',
-              border: `1px solid ${theme.border}`,
-              borderRadius: '6px',
-              fontSize: '14px',
-              outline: 'none',
               minWidth: '120px',
-              background:
-                theme.inputBg === '#334155' ? '#64748b' : theme.inputBg,
-              color: theme.text,
             }}
           >
             <option value="Básico">Básico</option>
@@ -138,16 +120,7 @@ export default function SkillsForm({ skills, onChange, theme }: Props) {
 
           <button
             onClick={addSkill}
-            style={{
-              padding: '10px 16px',
-              background: '#2563EB',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer',
-            }}
+            className="btn-primary"
           >
             Adicionar
           </button>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from './contexts/AuthContext';
 import Home from './pages/Home';
 import Auth from './pages/Auth';
@@ -7,14 +7,19 @@ function App() {
   const { user, loading } = useAuth();
   const [darkMode, setDarkMode] = useState(false);
 
-  const theme = {
-    bg: darkMode ? '#1a1a2e' : '#f7f8fc',
-    cardBg: darkMode ? '#16213e' : '#ffffff',
-    text: darkMode ? '#e4e6ea' : '#2c3e50',
-    border: darkMode ? '#0f3460' : '#d1d9e6',
-    headerBg: darkMode ? '#16213e' : '#ffffff',
-    inputBg: darkMode ? '#0f3460' : '#f8fafc',
-  };
+  // Aplicar tema no documento
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
+
+  const theme = useMemo(() => ({
+    bg: 'var(--bg)',
+    cardBg: 'var(--surface)',
+    text: 'var(--text-primary)',
+    border: 'var(--border)',
+    headerBg: darkMode ? 'linear-gradient(135deg, #2d1b14 0%, #1a0f0a 100%)' : 'linear-gradient(135deg, #603010 0%, #4a2a1c 100%)',
+    inputBg: 'var(--surface)',
+  }), [darkMode]);
 
   if (loading) {
     return (
