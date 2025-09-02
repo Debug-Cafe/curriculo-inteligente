@@ -38,17 +38,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (data: LoginData) => {
-    const response = await authApi.login(data);
-    localStorage.setItem('auth-token', response.token);
-    localStorage.setItem('auth-user', JSON.stringify(response.user));
-    setUser(response.user);
+    try {
+      const response = await authApi.login(data);
+      localStorage.setItem('auth-token', response.token);
+      localStorage.setItem('auth-user', JSON.stringify(response.user));
+      setUser(response.user);
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
   const register = async (data: RegisterData) => {
-    const response = await authApi.register(data);
-    localStorage.setItem('auth-token', response.token);
-    localStorage.setItem('auth-user', JSON.stringify(response.user));
-    setUser(response.user);
+    try {
+      const response = await authApi.register(data);
+      localStorage.setItem('auth-token', response.token);
+      localStorage.setItem('auth-user', JSON.stringify(response.user));
+      setUser(response.user);
+    } catch (error) {
+      console.error('Register error:', error);
+      throw error;
+    }
   };
 
   const logout = () => {

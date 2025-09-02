@@ -10,11 +10,12 @@ import ConfirmDialog from '../components/ConfirmDialog';
 import LoadDialog from '../components/LoadDialog';
 import TemplateSelector from '../components/TemplateSelector';
 import Toast from '../components/Toast';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../services/api';
-import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import LogoBolo from '../assets/LogoBolo.png';
+import jsPDF from 'jspdf';
+import logo from '../assets/logo.png';
 
 export default function Home() {
   const { user, logout } = useAuth();
@@ -22,6 +23,8 @@ export default function Home() {
     personalData: { name: '', email: '', phone: '', linkedin: '', summary: '' },
     skills: [],
     experiences: [],
+    education: [],
+    objectives: '',
   });
   const [educations, setEducations] = useState<any[]>([]);
   const [objective, setObjective] = useState('');
@@ -33,6 +36,7 @@ export default function Home() {
   const [template, setTemplate] = useState('modern');
   const [darkMode, setDarkMode] = useState(false);
   const [toast, setToast] = useState({ message: '', type: 'success' as 'success' | 'error', isVisible: false });
+  const [isLoading, setIsLoading] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
 
   const getProgressStep = () => {
@@ -102,6 +106,14 @@ export default function Home() {
             e.preventDefault();
             handleExportPDF();
             break;
+          case 'n':
+            e.preventDefault();
+            handleClear();
+            break;
+          case 'e':
+            e.preventDefault();
+            handleExportPDF();
+            break;
         }
       }
     };
@@ -112,6 +124,7 @@ export default function Home() {
 
   const handleSave = async () => {
     if (!resume.personalData.name.trim()) return;
+    setIsLoading(true);
     try {
       const resumeWithUser = { ...resume, userId: user?.id };
       const savedResume = await api.saveResume(resumeWithUser);
@@ -120,6 +133,8 @@ export default function Home() {
     } catch (error) {
       console.error(error);
       setToast({ message: 'Erro ao salvar currículo. Tente novamente.', type: 'error', isVisible: true });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -129,6 +144,7 @@ export default function Home() {
       setLoadDialog({ isOpen: true, resumes: resumesList });
     } catch (error) {
       console.error(error);
+      setToast({ message: 'Erro ao carregar currículos', type: 'error', isVisible: true });
     }
   };
 
@@ -137,8 +153,10 @@ export default function Home() {
       const loadedResume = await api.getResume(id);
       setResume(loadedResume);
       setLoadDialog({ isOpen: false, resumes: [] });
+      setToast({ message: 'Currículo carregado com sucesso!', type: 'success', isVisible: true });
     } catch (error) {
       console.error(error);
+      setToast({ message: 'Erro ao carregar currículo', type: 'error', isVisible: true });
     }
   };
 
@@ -161,6 +179,8 @@ export default function Home() {
       },
       skills: [],
       experiences: [],
+      education: [],
+      objectives: '',
     });
     setEducations([]);
     setObjective('');
@@ -171,50 +191,43 @@ export default function Home() {
     setClearDialog(false);
   };
 
-  const handleExportPDF = async () => {
-    if (!previewRef.current) return;
+  const handleExportPDF = () => {
+    const element = document.getElementById('resume-content');
+    if (!element) return;
 
-    try {
-      const canvas = await html2canvas(previewRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-      });
-
+    html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff'
+    }).then(canvas => {
+      const pdf = new jsPDF();
       const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
       const imgWidth = 210;
-      const pageHeight = 295;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-
-      let position = 0;
-
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      const fileName = resume.personalData.name || 'resume';
-      pdf.save(`${fileName.replace(/\s+/g, '_')}_resume.pdf`);
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      alert('Error generating PDF. Please try again.');
-    }
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      
+      const fileName = resume.personalData.name || 'curriculo';
+      pdf.save(`${fileName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
+      
+      setToast({ message: 'PDF gerado com sucesso!', type: 'success', isVisible: true });
+    }).catch(() => {
+      setToast({ message: 'Erro ao gerar PDF', type: 'error', isVisible: true });
+    });
   };
 
+  // Aplicar tema no documento
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
+
   const theme = {
-    bg: darkMode ? '#0f172a' : '#f8fafc',
-    cardBg: darkMode ? '#1e293b' : 'white',
-    text: darkMode ? '#f1f5f9' : '#1e293b',
-    border: darkMode ? '#475569' : '#e2e8f0',
-    headerBg: darkMode ? '#1e293b' : 'white',
-    inputBg: darkMode ? '#334155' : 'white',
+    bg: 'var(--bg)',
+    cardBg: 'var(--surface)',
+    text: 'var(--text-primary)',
+    border: 'var(--border)',
+    headerBg: darkMode ? 'linear-gradient(135deg, #2d1b14 0%, #1a0f0a 100%)' : 'linear-gradient(135deg, #603010 0%, #4a2a1c 100%)',
+    inputBg: 'var(--surface)',
   };
 
   return (
@@ -226,42 +239,53 @@ export default function Home() {
         transition: 'background-color 0.3s ease',
       }}
     >
+      <main role="main">
       {/* Header */}
-      <div
+      <header
+        role="banner"
         style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 2000,
           background: theme.headerBg,
           borderBottom: `1px solid ${theme.border}`,
-          padding: '16px 0',
+          padding: '20px 0',
           transition: 'all 0.3s ease',
+          boxShadow: '0 4px 20px rgba(96, 48, 16, 0.1)',
+          backdropFilter: 'blur(10px)',
         }}
       >
         <div
           style={{
-            maxWidth: '1200px',
+            maxWidth: '1400px',
             margin: '0 auto',
-            padding: '0 24px',
+            padding: '0 32px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            gap: '24px',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <img
-              src={LogoBolo}
-              alt="Logo Bolo"
+              src={logo}
+              alt="Logo"
               style={{
-                height: '40px',
+                height: '45px',
                 width: 'auto',
-                opacity: 0.85,
+                opacity: 0.9,
+                filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
               }}
             />
             <div>
               <h1
                 style={{
-                  fontSize: '19px',
-                  fontWeight: '600',
-                  color: theme.text,
-                  marginBottom: '4px',
+                  fontSize: '22px',
+                  fontWeight: '700',
+                  color: 'var(--foam)',
+                  marginBottom: '6px',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                  letterSpacing: '-0.5px',
                 }}
               >
                 Criador de Currículos Profissionais
@@ -269,8 +293,8 @@ export default function Home() {
               <p
                 style={{
                   fontSize: '14px',
-                  color: theme.text,
-                  opacity: 0.7,
+                  color: 'var(--foam)',
+                  opacity: 0.8,
                 }}
               >
                 Olá, {user?.name}! Crie seu currículo perfeito em minutos
@@ -278,60 +302,44 @@ export default function Home() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '12px' }}>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
             <button
               onClick={handleSave}
-              style={{
-                padding: '8px 16px',
-                background: '#2563EB',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-              }}
+              disabled={isLoading}
+              className="btn-primary"
+              aria-label="Salvar currículo (Ctrl+S)"
+              title="Salvar currículo (Ctrl+S)"
+              style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
             >
+              {isLoading && <LoadingSpinner size={16} color="white" />}
               Salvar
             </button>
             <button
               onClick={handleLoad}
-              style={{
-                padding: '8px 16px',
-                background: '#ecf0f1',
-                color: '#2c3e50',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-              }}
+              className="btn-primary"
+              aria-label="Carregar currículo (Ctrl+L)"
+              title="Carregar currículo (Ctrl+L)"
             >
               Carregar
             </button>
             <button
               onClick={handleClear}
-              style={{
-                padding: '8px 16px',
-                background: 'transparent',
-                color: '#7f8c8d',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-              }}
+              className="btn-primary"
+              aria-label="Limpar formulário (Ctrl+N)"
+              title="Limpar formulário (Ctrl+N)"
             >
               Limpar
             </button>
             <button
               onClick={() => setDarkMode(!darkMode)}
+              aria-label={`Alternar para modo ${darkMode ? 'claro' : 'escuro'}`}
+              title={`Alternar para modo ${darkMode ? 'claro' : 'escuro'}`}
               style={{
                 padding: '8px 12px',
                 background: 'transparent',
-                border: `1px solid ${theme.border}`,
+                border: '1px solid rgba(248, 246, 244, 0.3)',
                 borderRadius: '6px',
-                color: theme.text,
+                color: 'var(--foam)',
                 cursor: 'pointer',
                 fontSize: '16px',
               }}
@@ -345,51 +353,47 @@ export default function Home() {
             />
             <button
               onClick={handleExportPDF}
-              style={{
-                padding: '8px 16px',
-                background: '#4E6709',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-              }}
+              className="btn-secondary"
+              aria-label="Exportar currículo em PDF (Ctrl+P)"
+              title="Exportar currículo em PDF (Ctrl+P)"
             >
               Exportar PDF
             </button>
             <button
               onClick={logout}
-              style={{
-                padding: '8px 16px',
-                background: '#C81E3A',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-              }}
+              className="btn-danger"
+              aria-label="Sair da aplicação"
+              title="Sair da aplicação"
             >
               Sair
             </button>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Content */}
       <div
+        className="desktop-grid desktop-padding"
         style={{
-          maxWidth: '1200px',
+          maxWidth: '1400px',
           margin: '0 auto',
-          padding: '32px 24px',
+          padding: '40px 32px',
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
-          gap: '32px',
+          gap: '48px',
+          minHeight: 'calc(100vh - 200px)',
         }}
       >
         {/* Forms */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <section 
+          aria-label="Formulários de dados" 
+          style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: '32px',
+            padding: '8px'
+          }}
+        >
           <PersonalDataForm
             data={resume.personalData}
             onChange={updatePersonalData}
@@ -415,32 +419,43 @@ export default function Home() {
             onChange={setObjective}
             theme={theme}
           />
-        </div>
+        </section>
 
         {/* Preview */}
-        <div style={{ position: 'sticky', top: '32px', height: 'fit-content' }}>
+        <aside 
+          role="complementary" 
+          aria-label="Visualização do currículo"
+          style={{ 
+            position: window.innerWidth < 1024 ? 'static' : 'sticky', 
+            top: '32px', 
+            zIndex: 10,
+            height: 'fit-content'
+          }}
+        >
           <div ref={previewRef}>
             <ResumePreview resume={resume} template={template} theme={theme} />
           </div>
-        </div>
+        </aside>
       </div>
 
       {/* Fixed Progress Bar */}
-      <div
+      <nav
+        role="navigation"
+        aria-label="Progresso do currículo"
         style={{
           position: 'fixed',
-          bottom: '20px',
+          bottom: '24px',
           left: '50%',
           transform: 'translateX(-50%)',
-          background: theme.cardBg,
+          background: `${theme.cardBg}f0`,
+          backdropFilter: 'blur(20px)',
           border: `1px solid ${theme.border}`,
-          borderRadius: '8px',
-          padding: '16px 24px',
-          maxWidth: '800px',
-          width: '90%',
-          boxShadow:
-            '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-          zIndex: 100,
+          borderRadius: '16px',
+          padding: '20px 32px',
+          maxWidth: '900px',
+          width: '95%',
+          boxShadow: 'var(--shadow-xl)',
+          zIndex: 50,
         }}
       >
         <div
@@ -470,29 +485,34 @@ export default function Home() {
             >
               <div
                 style={{
-                  width: '24px',
-                  height: '24px',
-                  minWidth: '24px',
-                  minHeight: '24px',
+                  width: '32px',
+                  height: '32px',
+                  minWidth: '32px',
+                  minHeight: '32px',
                   borderRadius: '50%',
                   background:
-                    index < getProgressStep() ? '#E75A84' : theme.border,
+                    index < getProgressStep() 
+                      ? 'linear-gradient(135deg, var(--cinnamon), var(--caramel))' 
+                      : theme.border,
                   color: index < getProgressStep() ? 'white' : theme.text,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '12px',
-                  fontWeight: '500',
+                  fontSize: '14px',
+                  fontWeight: '600',
                   flexShrink: 0,
+                  boxShadow: index < getProgressStep() ? 'var(--shadow-sm)' : 'none',
+                  transition: 'all 0.3s ease',
                 }}
               >
                 {index + 1}
               </div>
               <span
                 style={{
-                  fontSize: '12px',
-                  color: index < getProgressStep() ? '#E75A84' : theme.text,
-                  fontWeight: index < getProgressStep() ? '500' : '400',
+                  fontSize: '13px',
+                  color: index < getProgressStep() ? 'var(--cinnamon)' : theme.text,
+                  fontWeight: index < getProgressStep() ? '600' : '500',
+                  transition: 'all 0.3s ease',
                 }}
               >
                 {step}
@@ -510,7 +530,7 @@ export default function Home() {
             </div>
           ))}
         </div>
-      </div>
+      </nav>
 
       {/* Spacer for fixed progress bar */}
       <div style={{ height: '120px' }} />
@@ -538,6 +558,7 @@ export default function Home() {
         isVisible={toast.isVisible}
         onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
       />
+      </main>
     </div>
   );
 }
