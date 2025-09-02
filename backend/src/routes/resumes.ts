@@ -2,17 +2,34 @@ import { Router, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { Resume } from '../types';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
+import { validateResume } from '../middleware/validation';
+import { db } from '../database/database';
 
 const router = Router();
-
-// Banco de dados em memória para currículos
-const resumes: Resume[] = [];
 
 // GET /api/resumes - Buscar todos os currículos
 router.get('/', authMiddleware, (req: AuthRequest, res: Response) => {
   try {
-    const userResumes = resumes.filter(resume => resume.userId === req.userId);
-    res.json(userResumes);
+    db.all('SELECT * FROM resumes WHERE user_id = ?', [req.userId], (err, rows: any[]) => {
+      if (err) {
+        return res.status(500).json({ message: 'Erro interno do servidor' });
+      }
+      
+      const resumes = rows.map(row => ({
+        id: row.id,
+        userId: row.user_id,
+        personalData: JSON.parse(row.personal_data),
+        skills: JSON.parse(row.skills),
+        experiences: JSON.parse(row.experiences),
+        educations: row.educations ? JSON.parse(row.educations) : [],
+        objectives: row.objectives,
+        template: row.template,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at
+      }));
+      
+      res.json(resumes);
+    });
   } catch (error) {
     res.status(500).json({ message: 'Erro interno do servidor' });
   }
@@ -22,13 +39,31 @@ router.get('/', authMiddleware, (req: AuthRequest, res: Response) => {
 router.get('/:id', authMiddleware, (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const resume = resumes.find(r => r.id === id && r.userId === req.userId);
     
-    if (!resume) {
-      return res.status(404).json({ message: 'Currículo não encontrado' });
-    }
+    db.get('SELECT * FROM resumes WHERE id = ? AND user_id = ?', [id, req.userId], (err, row: any) => {
+      if (err) {
+        return res.status(500).json({ message: 'Erro interno do servidor' });
+      }
+      
+      if (!row) {
+        return res.status(404).json({ message: 'Currículo não encontrado' });
+      }
 
-    res.json(resume);
+      const resume = {
+        id: row.id,
+        userId: row.user_id,
+        personalData: JSON.parse(row.personal_data),
+        skills: JSON.parse(row.skills),
+        experiences: JSON.parse(row.experiences),
+        educations: row.educations ? JSON.parse(row.educations) : [],
+        objectives: row.objectives,
+        template: row.template,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at
+      };
+      
+      res.json(resume);
+    });
   } catch (error) {
     res.status(500).json({ message: 'Erro interno do servidor' });
   }
@@ -39,17 +74,37 @@ router.get('/:id', authMiddleware, (req: AuthRequest, res: Response) => {
 router.post('/', authMiddleware, (req: AuthRequest, res: Response) => {
   try {
     const resumeData = req.body;
+    const resumeId = uuidv4();
     
-    const newResume: Resume = {
-      ...resumeData,
-      id: uuidv4(),
-      userId: req.userId!,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    resumes.push(newResume);
-    res.status(201).json(newResume);
+    db.run(
+      `INSERT INTO resumes (id, user_id, personal_data, skills, experiences, educations, objectives, template) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        resumeId,
+        req.userId,
+        JSON.stringify(resumeData.personalData),
+        JSON.stringify(resumeData.skills),
+        JSON.stringify(resumeData.experiences),
+        JSON.stringify(resumeData.educations || []),
+        resumeData.objectives,
+        resumeData.template || 'modern'
+      ],
+      function(err) {
+        if (err) {
+          return res.status(500).json({ message: 'Erro interno do servidor' });
+        }
+        
+        const newResume = {
+          ...resumeData,
+          id: resumeId,
+          userId: req.userId,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        
+        res.status(201).json(newResume);
+      }
+    );
   } catch (error) {
     res.status(500).json({ message: 'Erro interno do servidor' });
   }
@@ -61,22 +116,40 @@ router.put('/:id', authMiddleware, (req: AuthRequest, res: Response) => {
     const { id } = req.params;
     const resumeData = req.body;
     
-    const resumeIndex = resumes.findIndex(r => r.id === id && r.userId === req.userId);
-    
-    if (resumeIndex === -1) {
-      return res.status(404).json({ message: 'Currículo não encontrado' });
-    }
-
-    const updatedResume: Resume = {
-      ...resumeData,
-      id,
-      userId: req.userId!,
-      createdAt: resumes[resumeIndex].createdAt,
-      updatedAt: new Date()
-    };
-
-    resumes[resumeIndex] = updatedResume;
-    res.json(updatedResume);
+    db.run(
+      `UPDATE resumes SET 
+       personal_data = ?, skills = ?, experiences = ?, educations = ?, 
+       objectives = ?, template = ?, updated_at = CURRENT_TIMESTAMP
+       WHERE id = ? AND user_id = ?`,
+      [
+        JSON.stringify(resumeData.personalData),
+        JSON.stringify(resumeData.skills),
+        JSON.stringify(resumeData.experiences),
+        JSON.stringify(resumeData.educations || []),
+        resumeData.objectives,
+        resumeData.template || 'modern',
+        id,
+        req.userId
+      ],
+      function(err) {
+        if (err) {
+          return res.status(500).json({ message: 'Erro interno do servidor' });
+        }
+        
+        if (this.changes === 0) {
+          return res.status(404).json({ message: 'Currículo não encontrado' });
+        }
+        
+        const updatedResume = {
+          ...resumeData,
+          id,
+          userId: req.userId,
+          updatedAt: new Date()
+        };
+        
+        res.json(updatedResume);
+      }
+    );
   } catch (error) {
     res.status(500).json({ message: 'Erro interno do servidor' });
   }
@@ -87,18 +160,21 @@ router.delete('/:id', authMiddleware, (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     
-    const resumeIndex = resumes.findIndex(r => r.id === id && r.userId === req.userId);
-    
-    if (resumeIndex === -1) {
-      return res.status(404).json({ message: 'Currículo não encontrado' });
-    }
-
-    resumes.splice(resumeIndex, 1);
-    res.status(204).send();
+    db.run('DELETE FROM resumes WHERE id = ? AND user_id = ?', [id, req.userId], function(err) {
+      if (err) {
+        return res.status(500).json({ message: 'Erro interno do servidor' });
+      }
+      
+      if (this.changes === 0) {
+        return res.status(404).json({ message: 'Currículo não encontrado' });
+      }
+      
+      res.status(204).send();
+    });
   } catch (error) {
     res.status(500).json({ message: 'Erro interno do servidor' });
   }
 });
 
-export { router as resumesRouter, resumes };
+export { router as resumesRouter };
 
