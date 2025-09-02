@@ -22,6 +22,16 @@ export interface Experience {
   description: string;
 }
 
+export interface Education {
+  id: string;
+  institution: string;
+  degree: string;
+  field: string;
+  startDate: string;
+  endDate: string;
+  isCurrentStudy: boolean;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -46,6 +56,8 @@ export interface Resume {
   personalData: PersonalData;
   skills: Skill[];
   experiences: Experience[];
+  education: Education[];
+  objectives: string;
   createdAt?: string;
   updatedAt?: string;
 }
