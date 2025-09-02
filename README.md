@@ -304,22 +304,72 @@ app.put('/api/resumes/:id', authMiddleware, resumeController.update);
 app.delete('/api/resumes/:id', authMiddleware, resumeController.delete);
 ```
 
+## ✅ Melhorias Recentes Implementadas
+
+### 🔒 **Segurança e Validação**
+- **Middleware de Validação**: Validação completa no backend para auth e resumes
+- **Dependências Atualizadas**: Express 4.20.0 com correções de segurança
+- **Sanitização**: Helpers para sanitização de nomes de arquivos
+
+### ⚡ **Performance e Otimização**
+- **useMemo**: Otimização de re-renders com memoização de themes
+- **IDs Únicos**: crypto.randomUUID() substituindo Date.now()
+- **Templates Externos**: Arrays movidos para fora dos componentes
+- **Helpers Reutilizáveis**: Funções utilitárias centralizadas
+
+### 🎨 **UX e Interface**
+- **Loading States**: Spinner e feedback visual durante operações
+- **Tratamento de Erros**: Try-catch consistente com toast notifications
+- **Interface Completa**: Resume interface com education[] e objectives
+- **Feedback Melhorado**: Mensagens de sucesso/erro para todas as operações
+
+### 🛠️ **Estrutura e Manutenibilidade**
+- **Utils Helpers**: generateId, sanitizeFileName, formatDate, validateEmail
+- **Componentes Reutilizáveis**: LoadingSpinner para toda aplicação
+- **Código Limpo**: Redução de duplicação e melhor organização
+
 ## 🎯 Próximos Passos
 
-1. **PDF Export**: Implementar geração real de PDF
-2. **Compartilhamento**: URLs públicas para currículos
-3. **Templates Customizáveis**: Editor de templates
-4. **Analytics**: Métricas de visualização
-5. **Integração IA**: Sugestões automáticas de conteúdo
+1. **Sanitização XSS**: Implementar DOMPurify para campos de texto
+2. **CSRF Protection**: Tokens CSRF no backend
+3. **Compartilhamento**: URLs públicas para currículos
+4. **Templates Customizáveis**: Editor de templates
+5. **Analytics**: Métricas de visualização
+6. **Integração IA**: Sugestões automáticas de conteúdo
 
 ## 📝 Notas de Desenvolvimento
 
 - **Auto-save**: Salva automaticamente a cada mudança
-- **Validação**: Campos obrigatórios destacados em vermelho
+- **Validação**: Campos obrigatórios destacados em vermelho + validação backend
 - **Responsivo**: Layout adaptável para mobile
 - **Acessibilidade**: Labels e navegação por teclado
-- **Performance**: Componentes otimizados com useRef
-- **Segurança**: Variáveis de ambiente não versionadas (.env no .gitignore)
+- **Performance**: Componentes otimizados com useMemo e IDs únicos
+- **Segurança**: Variáveis de ambiente não versionadas + middleware de validação
+- **UX**: Loading states e feedback visual completo
+
+## 📅 Changelog
+
+### v1.2.0 - Melhorias de Segurança e Performance
+- ✅ Middleware de validação no backend
+- ✅ Dependências atualizadas (Express 4.20.0)
+- ✅ Otimizações de performance com memoização
+- ✅ IDs únicos com crypto.randomUUID()
+- ✅ Loading states e melhor UX
+- ✅ Helpers reutilizáveis
+- ✅ Tratamento de erros melhorado
+- ✅ Interface Resume completa
+
+### v1.1.0 - PDF Export Funcional
+- ✅ Geração de PDF com html2canvas + jsPDF
+- ✅ Correção de cores CSS (oklab removido)
+- ✅ Templates de currículo funcionais
+
+### v1.0.0 - Lançamento Inicial
+- ✅ Sistema de autenticação completo
+- ✅ Formulários de currículo com 6 etapas
+- ✅ 6 templates profissionais
+- ✅ Dark/Light mode
+- ✅ Auto-save e persistência local
 
 ## 🔒 Segurança
 
