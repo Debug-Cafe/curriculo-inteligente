@@ -1,5 +1,61 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
+:root {
+  /* cores base (do logo) */
+  --espresso: #603010;
+  --caramel: #c08030;
+  --toffee: #c08040;
+  --cinnamon: #c07040;
+  --latte: #e0c0b0;
+  --foam: #f8f6f4;
+
+  /* tokens semânticos - light mode */
+  --bg: var(--foam);
+  --surface: #ffffff;
+  --surface-alt: var(--latte);
+  --text-primary: #2d1810;
+  --text-secondary: #4a3426;
+  --text-muted: #6b4d3a;
+  --border: #e8ddd4;
+  --border-focus: var(--cinnamon);
+  --focus-ring: 0 0 0 3px rgba(192, 128, 48, 0.3);
+  --accent: var(--cinnamon);
+  --accent-hover: var(--caramel);
+  --success: #16a34a;
+  --error: #dc2626;
+  --warning: #d97706;
+
+  --shadow-sm: 0 2px 4px 0 rgba(96, 48, 16, 0.06), 0 1px 2px 0 rgba(96, 48, 16, 0.04);
+  --shadow: 0 8px 25px -5px rgba(96, 48, 16, 0.1), 0 4px 10px -3px rgba(96, 48, 16, 0.05);
+  --shadow-lg: 0 25px 50px -12px rgba(96, 48, 16, 0.25), 0 12px 20px -8px rgba(96, 48, 16, 0.1);
+  --shadow-xl: 0 35px 60px -12px rgba(96, 48, 16, 0.35);
+
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+
+[data-theme="dark"] {
+  /* dark mode melhorado */
+  --bg: #0f0a07;
+  --surface: #1a1209;
+  --surface-alt: #2a1d12;
+  --text-primary: #f0e6d6;
+  --text-secondary: #d4c4b0;
+  --text-muted: #a89580;
+  --border: #3d2f22;
+  --border-focus: var(--caramel);
+  --accent: var(--caramel);
+  --accent-hover: var(--toffee);
+  --success: #10b981;
+  --error: #f87171;
+  --warning: #fbbf24;
+
+  --shadow-sm: 0 2px 8px 0 rgba(0, 0, 0, 0.3), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+  --shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.4), 0 4px 10px -3px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 12px 20px -8px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 35px 60px -12px rgba(0, 0, 0, 0.7);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -7,9 +63,216 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background: #f8fafc;
-  color: #1e293b;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--caramel) 100%);
+  color: white;
+  border: 0;
+  border-radius: var(--radius-lg);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--caramel) 0%, var(--toffee) 100%);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: var(--success);
+  color: white;
+  border: 0;
+  border-radius: var(--radius-lg);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+  background: #15803d;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-outline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.3s ease;
+  z-index: -1;
+}
+
+.btn-outline:hover::before {
+  width: 100%;
+}
+
+.btn-outline:hover {
+  color: white;
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-danger {
+  background: var(--error);
+  color: white;
+  border: 0;
+  border-radius: var(--radius-lg);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+input, select, textarea {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  color: var(--text-primary);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+  font-weight: 500;
+}
+
+input::placeholder, select::placeholder, textarea::placeholder {
+  color: var(--text-muted);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--border-focus);
+  box-shadow: var(--focus-ring), var(--shadow-sm);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+button:focus {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+@media (max-width: 1024px) {
+  .desktop-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  .desktop-padding {
+    padding: 24px 16px !important;
+  }
+}
+
+/* Animações globais */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Scroll suave */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Seleção de texto personalizada */
+::selection {
+  background: var(--accent);
+  color: white;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-alt);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-hover);
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
