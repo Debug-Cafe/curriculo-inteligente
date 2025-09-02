@@ -3,9 +3,13 @@ import cors from 'cors';
 import { authRouter } from './routes/auth';
 import { resumesRouter } from './routes/resumes';
 import { usersRouter } from './routes/users';
+import { initDatabase } from './database/database';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001', 10);
+
+// Inicializar banco de dados
+initDatabase();
 
 // Middleware
 app.use(cors({
