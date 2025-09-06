@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 
 interface Props {
   objective: string;
@@ -15,6 +15,7 @@ interface Props {
 
 export default function ObjectivesForm({ objective, onChange, theme }: Props) {
   const objectiveRef = useRef<HTMLTextAreaElement>(null);
+  const [selectedTone, setSelectedTone] = useState('formal');
 
   useEffect(() => {
     if (objectiveRef.current) objectiveRef.current.value = objective;
@@ -22,6 +23,26 @@ export default function ObjectivesForm({ objective, onChange, theme }: Props) {
 
   const handleInput = () => {
     onChange(objectiveRef.current?.value || '');
+  };
+
+  const handleImproveWithAI = async () => {
+    try {
+      const res = await fetch('/api/melhorar-texto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          texto: objectiveRef.current?.value,
+          tom: selectedTone,
+        }),
+      });
+      const data = await res.json();
+      if (data.textoMelhorado) {
+        onChange(data.textoMelhorado);
+        if (objectiveRef.current) objectiveRef.current.value = data.textoMelhorado;
+      }
+    } catch (err) {
+      console.error('Erro ao melhorar objetivo:', err);
+    }
   };
 
   return (
@@ -69,11 +90,7 @@ export default function ObjectivesForm({ objective, onChange, theme }: Props) {
             borderRadius: '6px',
             fontSize: '14px',
             outline: 'none',
-            background: objective
-              ? theme.inputBg === '#334155'
-                ? '#64748b'
-                : theme.inputBg
-              : theme.inputBg,
+            background: objective ? theme.inputBg : theme.inputBg,
             color: theme.text,
             resize: 'none',
             transition: 'all 0.3s ease',
@@ -86,16 +103,46 @@ export default function ObjectivesForm({ objective, onChange, theme }: Props) {
             justifyContent: 'space-between',
             alignItems: 'center',
             marginTop: '6px',
+            gap: '8px',
+            flexWrap: 'wrap',
           }}
         >
           <span style={{ fontSize: '12px', color: theme.text, opacity: 0.7 }}>
             Máximo 300 caracteres
           </span>
-          <span
-            style={{ fontSize: '12px', color: theme.text, fontWeight: '500' }}
-          >
+          <span style={{ fontSize: '12px', color: theme.text, fontWeight: '500' }}>
             {objective.length}/300
           </span>
+          <select
+            value={selectedTone}
+            onChange={(e) => setSelectedTone(e.target.value)}
+            style={{
+              padding: '6px 12px',
+              borderRadius: '4px',
+              border: `1px solid ${theme.border}`,
+              background: theme.inputBg,
+              color: theme.text,
+              fontSize: '12px',
+            }}
+          >
+            <option value="formal">Formal</option>
+            <option value="semi-formal">Semi-formal</option>
+            <option value="casual">Casual</option>
+          </select>
+          <button
+            onClick={handleImproveWithAI}
+            style={{
+              padding: '6px 12px',
+              borderRadius: '4px',
+              border: 'none',
+              background: '#f48c3c',
+              color: '#fff',
+              cursor: 'pointer',
+              fontSize: '12px',
+            }}
+          >
+            Melhorar com IA
+          </button>
         </div>
       </div>
 

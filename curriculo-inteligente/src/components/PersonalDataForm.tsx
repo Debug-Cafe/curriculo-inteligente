@@ -38,6 +38,7 @@ export default function PersonalDataForm({ data, onChange, theme }: Props) {
       summary: summaryRef.current?.value || '',
     });
   };
+
   const formatPhone = (value: string): string => {
     const numbers = value.replace(/\D/g, '');
 
@@ -96,6 +97,7 @@ export default function PersonalDataForm({ data, onChange, theme }: Props) {
       </h2>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {/* Nome e Email */}
         <div
           style={{
             display: 'grid',
@@ -146,6 +148,7 @@ export default function PersonalDataForm({ data, onChange, theme }: Props) {
           </div>
         </div>
 
+        {/* Telefone e LinkedIn */}
         <div
           style={{
             display: 'grid',
@@ -196,6 +199,7 @@ export default function PersonalDataForm({ data, onChange, theme }: Props) {
           </div>
         </div>
 
+        {/* Resumo Profissional com botão de IA */}
         <div>
           <label
             style={{
@@ -225,16 +229,67 @@ export default function PersonalDataForm({ data, onChange, theme }: Props) {
               justifyContent: 'space-between',
               alignItems: 'center',
               marginTop: '6px',
+              gap: '8px',
+              flexWrap: 'wrap',
             }}
           >
+            {/* Contador de caracteres */}
             <span style={{ fontSize: '12px', color: theme.text, opacity: 0.7 }}>
               Máximo 500 caracteres
             </span>
-            <span
-              style={{ fontSize: '12px', color: theme.text, fontWeight: '500' }}
-            >
+            <span style={{ fontSize: '12px', color: theme.text, fontWeight: '500' }}>
               {data.summary.length}/500
             </span>
+
+            {/* Select de tom da IA */}
+            <select
+              id="tom-summary"
+              style={{
+                padding: '4px 8px',
+                borderRadius: '4px',
+                border: `1px solid ${theme.border}`,
+                background: theme.inputBg,
+                color: theme.text,
+              }}
+            >
+              <option value="formal">Formal</option>
+              <option value="semi-formal">Semi-formal</option>
+              <option value="casual">Casual</option>
+            </select>
+
+            {/* Botão melhorar com IA */}
+            <button
+              type="button"
+              onClick={async () => {
+                const tom = (document.getElementById('tom-summary') as HTMLSelectElement).value;
+                const texto = summaryRef.current?.value || '';
+
+                try {
+                  const res = await fetch('/api/melhorar-texto', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ campo: 'summary', texto, parametros: { tom } }),
+                  });
+                  const dataIA = await res.json();
+                  if (dataIA.textoMelhorado && summaryRef.current) {
+                    summaryRef.current.value = dataIA.textoMelhorado;
+                    handleInput(); // Atualiza o state do parent
+                  }
+                } catch (err) {
+                  console.error('Erro ao melhorar o texto com IA:', err);
+                }
+              }}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '4px',
+                border: 'none',
+                background: '#f48c3c',
+                color: '#fff',
+                cursor: 'pointer',
+              }}
+            >
+              Melhorar com IA
+            </button>
           </div>
         </div>
       </div>

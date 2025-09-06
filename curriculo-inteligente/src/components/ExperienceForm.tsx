@@ -25,6 +25,7 @@ export default function ExperienceForm({
     expId: string;
     expName: string;
   }>({ isOpen: false, expId: '', expName: '' });
+
   const [newExp, setNewExp] = useState({
     company: '',
     position: '',
@@ -96,6 +97,7 @@ export default function ExperienceForm({
           marginBottom: '24px',
         }}
       >
+        {/* Empresa e Cargo */}
         <div
           style={{
             display: 'grid',
@@ -128,11 +130,7 @@ export default function ExperienceForm({
                 borderRadius: '6px',
                 fontSize: '14px',
                 outline: 'none',
-                background: newExp.company
-                  ? theme.inputBg === '#334155'
-                    ? '#64748b'
-                    : theme.inputBg
-                  : theme.inputBg,
+                background: newExp.company ? theme.inputBg : theme.inputBg,
                 color: theme.text,
               }}
               placeholder="Nome da empresa"
@@ -164,11 +162,7 @@ export default function ExperienceForm({
                 borderRadius: '6px',
                 fontSize: '14px',
                 outline: 'none',
-                background: newExp.position
-                  ? theme.inputBg === '#334155'
-                    ? '#64748b'
-                    : theme.inputBg
-                  : theme.inputBg,
+                background: newExp.position ? theme.inputBg : theme.inputBg,
                 color: theme.text,
               }}
               placeholder="Título do cargo"
@@ -176,6 +170,7 @@ export default function ExperienceForm({
           </div>
         </div>
 
+        {/* Datas */}
         <div
           style={{
             display: 'grid',
@@ -208,11 +203,7 @@ export default function ExperienceForm({
                 borderRadius: '6px',
                 fontSize: '14px',
                 outline: 'none',
-                background: newExp.startDate
-                  ? theme.inputBg === '#334155'
-                    ? '#64748b'
-                    : theme.inputBg
-                  : theme.inputBg,
+                background: newExp.startDate ? theme.inputBg : theme.inputBg,
                 color: theme.text,
               }}
             />
@@ -252,6 +243,7 @@ export default function ExperienceForm({
           </div>
         </div>
 
+        {/* Posição atual */}
         <div>
           <label
             style={{
@@ -279,6 +271,7 @@ export default function ExperienceForm({
           </label>
         </div>
 
+        {/* Descrição + IA */}
         <div>
           <label
             style={{
@@ -305,28 +298,95 @@ export default function ExperienceForm({
               fontSize: '14px',
               outline: 'none',
               resize: 'none',
-              background: newExp.description
-                ? theme.inputBg === '#334155'
-                  ? '#64748b'
-                  : theme.inputBg
-                : theme.inputBg,
+              background: theme.inputBg,
               color: theme.text,
             }}
             placeholder="Principais responsabilidades e conquistas..."
           />
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginTop: '6px',
+              gap: '8px',
+              flexWrap: 'wrap',
+            }}
+          >
+            <span style={{ fontSize: '12px', color: theme.text, opacity: 0.7 }}>
+              Máximo 500 caracteres
+            </span>
+            <span
+              style={{
+                fontSize: '12px',
+                color: theme.text,
+                fontWeight: '500',
+              }}
+            >
+              {newExp.description.length}/500
+            </span>
+            <select
+              id="tom-description"
+              style={{
+                padding: '6px 12px',
+                borderRadius: '4px',
+                border: `1px solid ${theme.border}`,
+                background: theme.inputBg,
+                color: theme.text,
+                fontSize: '12px',
+              }}
+            >
+              <option value="formal">Formal</option>
+              <option value="semi-formal">Semi-formal</option>
+              <option value="casual">Casual</option>
+            </select>
+            <button
+              onClick={async () => {
+                try {
+                  const res = await fetch('/api/melhorar-texto', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      texto: newExp.description,
+                      tom: (document.getElementById(
+                        'tom-description'
+                      ) as HTMLSelectElement).value,
+                    }),
+                  });
+                  const data = await res.json();
+                  if (data.textoMelhorado) {
+                    setNewExp({ ...newExp, description: data.textoMelhorado });
+                  }
+                } catch (err) {
+                  console.error('Erro ao melhorar descrição:', err);
+                }
+              }}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '4px',
+                border: 'none',
+                background: '#f48c3c',
+                color: '#fff',
+                cursor: 'pointer',
+                fontSize: '12px',
+              }}
+            >
+              Melhorar com IA
+            </button>
+          </div>
         </div>
 
+        {/* Botão adicionar */}
         <button
           onClick={addExperience}
           className="btn-primary"
-          style={{
-            width: '100%',
-          }}
+          style={{ width: '100%' }}
         >
           Adicionar Experiência
         </button>
       </div>
 
+      {/* Lista de experiências */}
       {experiences.length === 0 ? (
         <div
           style={{
