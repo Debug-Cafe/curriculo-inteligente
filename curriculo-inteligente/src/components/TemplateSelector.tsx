@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 
 interface Props {
   template: string;
-  onChange: (template: string) => void;
+  onChange: (template: 'modern' | 'classic' | 'creative' | 'minimal' | 'professional' | 'elegant') => void;
   theme: { bg: string; cardBg: string; text: string; border: string };
 }
 
@@ -93,17 +93,15 @@ export default function TemplateSelector({ template, onChange, theme }: Props) {
                 '0 10px 25px -5px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
               zIndex: 2147483647, // máximo prático
               overflow: 'hidden',
-              width: rect.width,
               maxWidth: '180px',
             }}
           >
             {templates.map((tmpl) => (
               <button
                 key={tmpl.id}
-                onClick={() => {
-                  onChange(tmpl.id);
-                  setIsOpen(false);
-                }}
+                onClick={() =>
+                  onChange(tmpl.id as 'modern' | 'classic' | 'creative' | 'minimal' | 'professional' | 'elegant')
+                }
                 style={{
                   width: '100%',
                   display: 'flex',

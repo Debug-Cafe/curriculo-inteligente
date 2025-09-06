@@ -10,7 +10,7 @@ const router = Router();
 // GET /api/resumes - Buscar todos os currículos
 router.get('/', authMiddleware, (req: AuthRequest, res: Response) => {
   try {
-    db.all('SELECT * FROM resumes WHERE user_id = ?', [req.userId], (err, rows: any[]) => {
+    db.all('SELECT * FROM resumes WHERE user_id = ?', [req.userId], (err: Error | null, rows: any[]) => {
       if (err) {
         return res.status(500).json({ message: 'Erro interno do servidor' });
       }
@@ -40,7 +40,7 @@ router.get('/:id', authMiddleware, (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     
-    db.get('SELECT * FROM resumes WHERE id = ? AND user_id = ?', [id, req.userId], (err, row: any) => {
+    db.get('SELECT * FROM resumes WHERE id = ? AND user_id = ?', [id, req.userId], (err: Error | null, row: any) => {
       if (err) {
         return res.status(500).json({ message: 'Erro interno do servidor' });
       }
@@ -89,7 +89,7 @@ router.post('/', authMiddleware, (req: AuthRequest, res: Response) => {
         resumeData.objectives,
         resumeData.template || 'modern'
       ],
-      function(err) {
+      function(err: Error | null) {
         if (err) {
           return res.status(500).json({ message: 'Erro interno do servidor' });
         }
@@ -131,7 +131,7 @@ router.put('/:id', authMiddleware, (req: AuthRequest, res: Response) => {
         id,
         req.userId
       ],
-      function(err) {
+      function(this: import('sqlite3').RunResult, err: Error | null) {
         if (err) {
           return res.status(500).json({ message: 'Erro interno do servidor' });
         }
@@ -160,7 +160,7 @@ router.delete('/:id', authMiddleware, (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     
-    db.run('DELETE FROM resumes WHERE id = ? AND user_id = ?', [id, req.userId], function(err) {
+    db.run('DELETE FROM resumes WHERE id = ? AND user_id = ?', [id, req.userId], function(this: import('sqlite3').RunResult, err: Error | null) {
       if (err) {
         return res.status(500).json({ message: 'Erro interno do servidor' });
       }
