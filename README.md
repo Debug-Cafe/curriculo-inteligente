@@ -395,4 +395,4 @@ app.delete('/api/resumes/:id', authMiddleware, resumeController.delete);
 
 ---
 
-**Desenvolvido com foco em UX moderna, design system consistente e integração backend seamless.**
+**Desenvolvido com foco em UX moderna, design system consistente e integração backend seamless...**
