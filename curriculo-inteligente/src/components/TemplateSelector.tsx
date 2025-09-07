@@ -94,6 +94,12 @@ export default function TemplateSelector({ template, onChange, theme }: Props) {
               zIndex: 2147483647, // máximo prático
               overflow: 'hidden',
               width: rect.width,
+              get width() {
+                return this.width;
+              },
+              set width(value) {
+                this.width = value;
+              },
               maxWidth: '180px',
             }}
           >

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback, useEffect, useRef } from 'react';
 import type { Resume, PersonalData, Skill, Experience } from '../types';
 import PersonalDataForm from '../components/PersonalDataForm';

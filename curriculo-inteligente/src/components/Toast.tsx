@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ToastProps {
   message: string;
@@ -8,29 +8,34 @@ interface ToastProps {
 }
 
 export default function Toast({ message, type, isVisible, onClose }: ToastProps) {
+  const [show, setShow] = useState(isVisible);
+
   useEffect(() => {
     if (isVisible) {
+      setShow(true);
       const timer = setTimeout(() => {
-        onClose();
+        setShow(false);
+        setTimeout(onClose, 300); // espera a animação antes de remover
       }, 3000);
       return () => clearTimeout(timer);
     }
   }, [isVisible, onClose]);
 
-  if (!isVisible) return null;
+  if (!show) return null;
 
   return (
     <div
       role="status"
-      aria-live="polite"
+      aria-live={type === 'error' ? 'assertive' : 'polite'}
       aria-atomic="true"
       style={{
         position: 'fixed',
         top: '24px',
         right: '24px',
-        background: type === 'success' 
-          ? 'linear-gradient(135deg, var(--caramel), var(--toffee))' 
-          : 'linear-gradient(135deg, var(--error), #b91c1c)',
+        background:
+          type === 'success'
+            ? 'linear-gradient(135deg, var(--caramel), var(--toffee))'
+            : 'linear-gradient(135deg, var(--error), #b91c1c)',
         color: 'white',
         padding: '16px 24px',
         borderRadius: '12px',
@@ -41,13 +46,16 @@ export default function Toast({ message, type, isVisible, onClose }: ToastProps)
         gap: '12px',
         fontSize: '14px',
         fontWeight: '600',
-        animation: 'slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+        animation: `${isVisible ? 'slideIn' : 'slideOut'} 0.3s ease`,
         backdropFilter: 'blur(10px)',
         border: '1px solid rgba(255, 255, 255, 0.1)',
       }}
     >
-      <span>{type === 'success' ? '✓' : '✗'}</span>
+      <span style={{ fontSize: '18px' }}>
+        {type === 'success' ? '✅' : '❌'}
+      </span>
       {message}
+
       <style>
         {`
           @keyframes slideIn {
@@ -58,6 +66,17 @@ export default function Toast({ message, type, isVisible, onClose }: ToastProps)
             to {
               transform: translateX(0) scale(1);
               opacity: 1;
+            }
+          }
+
+          @keyframes slideOut {
+            from {
+              transform: translateX(0) scale(1);
+              opacity: 1;
+            }
+            to {
+              transform: translateX(100%) scale(0.9);
+              opacity: 0;
             }
           }
         `}
