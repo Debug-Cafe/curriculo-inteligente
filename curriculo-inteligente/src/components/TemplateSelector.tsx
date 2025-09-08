@@ -8,20 +8,24 @@ interface Props {
 }
 
 const templates = [
-    { id: 'modern',      name: 'Moderno',      color: '#603010' },
-    { id: 'classic',     name: 'Clássico',     color: '#c08030' },
-    { id: 'creative',    name: 'Criativo',     color: '#c08040' },
-    { id: 'minimal',     name: 'Minimalista',  color: '#c07040' },
-    { id: 'professional',name: 'Profissional', color: '#603010' },
-    { id: 'elegant',     name: 'Elegante',     color: '#e0c0b0' },
-  ];
+  { id: 'modern', name: 'Moderno', color: '#603010' },
+  { id: 'classic', name: 'Clássico', color: '#c08030' },
+  { id: 'creative', name: 'Criativo', color: '#c08040' },
+  { id: 'minimal', name: 'Minimalista', color: '#c07040' },
+  { id: 'professional', name: 'Profissional', color: '#603010' },
+  { id: 'elegant', name: 'Elegante', color: '#e0c0b0' },
+];
 
 export default function TemplateSelector({ template, onChange, theme }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [rect, setRect] = useState<{ top: number; left: number; width: number }>({ top: 0, left: 0, width: 0 });
+  const [rect, setRect] = useState<{
+    top: number;
+    left: number;
+    width: number;
+  }>({ top: 0, left: 0, width: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const current = templates.find(t => t.id === template) ?? templates[0];
+  const current = templates.find((t) => t.id === template) ?? templates[0];
 
   function open() {
     if (!buttonRef.current) return;
@@ -93,13 +97,6 @@ export default function TemplateSelector({ template, onChange, theme }: Props) {
                 '0 10px 25px -5px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
               zIndex: 2147483647, // máximo prático
               overflow: 'hidden',
-              width: rect.width,
-              get width() {
-                return this.width;
-              },
-              set width(value) {
-                this.width = value;
-              },
               maxWidth: '180px',
             }}
           >
@@ -149,7 +146,15 @@ export default function TemplateSelector({ template, onChange, theme }: Props) {
                   </div>
                 </div>
                 {template === tmpl.id && (
-                  <span style={{ marginLeft: 'auto', color: tmpl.color, fontSize: 16 }}>✓</span>
+                  <span
+                    style={{
+                      marginLeft: 'auto',
+                      color: tmpl.color,
+                      fontSize: 16,
+                    }}
+                  >
+                    ✓
+                  </span>
                 )}
               </button>
             ))}
