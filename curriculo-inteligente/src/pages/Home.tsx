@@ -12,14 +12,17 @@ import LoadDialog from '../components/LoadDialog';
 import TemplateSelector from '../components/TemplateSelector';
 import Toast from '../components/Toast';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { FormSkeleton, PreviewSkeleton } from '../components/Skeleton';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../services/api';
+import { useResponsive } from '../hooks/useResponsive';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import logo from '../assets/logo.png';
 
 export default function Home() {
   const { user, logout } = useAuth();
+  const { isMobile, isTablet, isDesktop } = useResponsive();
   const [resume, setResume] = useState<Resume>({
     personalData: { name: '', email: '', phone: '', linkedin: '', summary: '' },
     skills: [],
@@ -38,6 +41,8 @@ export default function Home() {
   const [darkMode, setDarkMode] = useState(false);
   const [toast, setToast] = useState({ message: '', type: 'success' as 'success' | 'error', isVisible: false });
   const [isLoading, setIsLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const previewRef = useRef<HTMLDivElement>(null);
 
   const getProgressStep = () => {
@@ -70,6 +75,11 @@ export default function Home() {
     setResume((prev) => ({ ...prev, experiences }));
   }, []);
 
+  const updateObjectives = useCallback((objectives: string) => {
+    setObjective(objectives);
+    setResume((prev) => ({ ...prev, objectives }));
+  }, []);
+
   // Auto-save to localStorage
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -80,14 +90,25 @@ export default function Home() {
 
   // Load from localStorage on mount
   useEffect(() => {
-    const saved = localStorage.getItem('resume-draft');
-    if (saved) {
-      try {
-        setResume(JSON.parse(saved));
-      } catch (e) {
-        console.error('Failed to load saved resume');
+    const loadInitialData = async () => {
+      setIsInitialLoading(true);
+      
+      // Simula carregamento da API
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      const saved = localStorage.getItem('resume-draft');
+      if (saved) {
+        try {
+          setResume(JSON.parse(saved));
+        } catch (e) {
+          console.error('Failed to load saved resume');
+        }
       }
-    }
+      
+      setIsInitialLoading(false);
+    };
+    
+    loadInitialData();
   }, []);
 
   // Keyboard shortcuts
@@ -141,7 +162,7 @@ export default function Home() {
 
   const handleLoad = async () => {
     try {
-      const resumesList = await api.getUserResumes(user?.id || '');
+      const resumesList = await api.getAllResumes();
       setLoadDialog({ isOpen: true, resumes: resumesList });
     } catch (error) {
       console.error(error);
@@ -192,15 +213,18 @@ export default function Home() {
     setClearDialog(false);
   };
 
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
     const element = document.getElementById('resume-content');
     if (!element) return;
 
-    html2canvas(element, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff'
-    }).then(canvas => {
+    setIsExporting(true);
+    try {
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      });
+      
       const pdf = new jsPDF();
       const imgData = canvas.toDataURL('image/png');
       const imgWidth = 210;
@@ -212,9 +236,11 @@ export default function Home() {
       pdf.save(`${fileName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
       
       setToast({ message: 'PDF gerado com sucesso!', type: 'success', isVisible: true });
-    }).catch(() => {
+    } catch (error) {
       setToast({ message: 'Erro ao gerar PDF', type: 'error', isVisible: true });
-    });
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   // Aplicar tema no documento
@@ -354,11 +380,20 @@ export default function Home() {
             />
             <button
               onClick={handleExportPDF}
+              disabled={isExporting}
               className="btn-secondary"
               aria-label="Exportar currículo em PDF (Ctrl+P)"
               title="Exportar currículo em PDF (Ctrl+P)"
+              style={{
+                cursor: isExporting ? 'not-allowed' : 'pointer',
+                opacity: isExporting ? 0.7 : 1,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
             >
-              Exportar PDF
+              {isExporting && <LoadingSpinner size={16} color="white" />}
+              {isExporting ? 'Gerando PDF...' : 'Exportar PDF'}
             </button>
             <button
               onClick={logout}
@@ -376,13 +411,13 @@ export default function Home() {
       <div
         className="desktop-grid desktop-padding"
         style={{
-          maxWidth: '1400px',
+          maxWidth: '1300px',
           margin: '0 auto',
-          padding: '40px 32px',
+          padding: '32px 24px',
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '48px',
-          minHeight: 'calc(100vh - 200px)',
+          gridTemplateColumns: isMobile ? '1fr' : isTablet ? '1fr' : '1.2fr 0.8fr',
+          gap: isMobile ? '20px' : isTablet ? '24px' : '32px',
+          minHeight: 'calc(100vh - 180px)',
         }}
       >
         {/* Forms */}
@@ -391,35 +426,51 @@ export default function Home() {
           style={{ 
             display: 'flex', 
             flexDirection: 'column', 
-            gap: '32px',
-            padding: '8px'
+            gap: '24px',
+            padding: '4px'
           }}
         >
-          <PersonalDataForm
-            data={resume.personalData}
-            onChange={updatePersonalData}
-            theme={theme}
-          />
-          <ExperienceForm
-            experiences={resume.experiences}
-            onChange={updateExperiences}
-            theme={theme}
-          />
-          <EducationForm
-            educations={educations}
-            onChange={setEducations}
-            theme={theme}
-          />
-          <SkillsForm
-            skills={resume.skills}
-            onChange={updateSkills}
-            theme={theme}
-          />
-          <ObjectivesForm
-            objective={objective}
-            onChange={setObjective}
-            theme={theme}
-          />
+          {isInitialLoading ? (
+            <>
+              <FormSkeleton theme={theme} />
+              <FormSkeleton theme={theme} />
+              <FormSkeleton theme={theme} />
+              <FormSkeleton theme={theme} />
+              <FormSkeleton theme={theme} />
+            </>
+          ) : (
+            <>
+              <PersonalDataForm
+                data={resume.personalData}
+                onChange={updatePersonalData}
+                theme={theme}
+              />
+              <ExperienceForm
+                experiences={resume.experiences}
+                onChange={updateExperiences}
+                theme={theme}
+              />
+              <EducationForm
+                educations={educations}
+                onChange={setEducations}
+                theme={theme}
+              />
+              <SkillsForm
+                skills={resume.skills}
+                onChange={updateSkills}
+                resumeData={{
+                  summary: resume.personalData.summary,
+                  experiences: resume.experiences
+                }}
+                theme={theme}
+              />
+              <ObjectivesForm
+                objective={objective}
+                onChange={updateObjectives}
+                theme={theme}
+              />
+            </>
+          )}
         </section>
 
         {/* Preview */}
@@ -427,14 +478,20 @@ export default function Home() {
           role="complementary" 
           aria-label="Visualização do currículo"
           style={{ 
-            position: window.innerWidth < 1024 ? 'static' : 'sticky', 
-            top: '32px', 
+            position: isDesktop ? 'sticky' : 'static', 
+            top: '24px', 
             zIndex: 10,
-            height: 'fit-content'
+            height: 'fit-content',
+            maxHeight: isDesktop ? 'calc(100vh - 120px)' : 'none',
+            overflowY: isDesktop ? 'auto' : 'visible'
           }}
         >
           <div ref={previewRef}>
-            <ResumePreview resume={resume} template={template} theme={theme} />
+            {isInitialLoading ? (
+              <PreviewSkeleton theme={theme} />
+            ) : (
+              <ResumePreview resume={resume} template={template} theme={theme} />
+            )}
           </div>
         </aside>
       </div>
@@ -534,7 +591,7 @@ export default function Home() {
       </nav>
 
       {/* Spacer for fixed progress bar */}
-      <div style={{ height: '120px' }} />
+      <div style={{ height: '100px' }} />
 
       <ConfirmDialog
         isOpen={clearDialog}

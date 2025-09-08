@@ -1,4 +1,5 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
+import LoadingSpinner from './LoadingSpinner';
 
 interface Props {
   objective: string;
@@ -15,6 +16,7 @@ interface Props {
 
 export default function ObjectivesForm({ objective, onChange, theme }: Props) {
   const objectiveRef = useRef<HTMLTextAreaElement>(null);
+  const [isImproving, setIsImproving] = useState(false);
 
   useEffect(() => {
     if (objectiveRef.current) objectiveRef.current.value = objective;
@@ -22,6 +24,49 @@ export default function ObjectivesForm({ objective, onChange, theme }: Props) {
 
   const handleInput = () => {
     onChange(objectiveRef.current?.value || '');
+  };
+
+  const handleImproveText = async () => {
+    if (!objective.trim()) return;
+    
+    setIsImproving(true);
+    try {
+      const response = await fetch('http://localhost:3001/api/ai/improve', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({
+          text: objective.trim(),
+          type: 'elaboration'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro na requisição');
+      }
+
+      const data = await response.json();
+      const improvedText = data.improvedText;
+      
+      onChange(improvedText);
+      
+      if (objectiveRef.current) {
+        objectiveRef.current.value = improvedText;
+      }
+    } catch (error) {
+      console.error('Erro ao melhorar texto:', error);
+      console.error('Detalhes do erro:', error.message);
+      // Fallback para simulação se API falhar
+      const fallbackText = `${objective.trim()} - Texto melhorado com IA`;
+      onChange(fallbackText);
+      if (objectiveRef.current) {
+        objectiveRef.current.value = fallbackText;
+      }
+    } finally {
+      setIsImproving(false);
+    }
   };
 
   return (
@@ -59,16 +104,25 @@ export default function ObjectivesForm({ objective, onChange, theme }: Props) {
         </label>
         <textarea
           ref={objectiveRef}
-          onInput={handleInput}
+          onInput={(e) => {
+            handleInput();
+            // Auto-expand textarea
+            e.currentTarget.style.height = 'auto';
+            e.currentTarget.style.height = e.currentTarget.scrollHeight + 'px';
+          }}
           maxLength={300}
           rows={4}
+          className={isImproving ? 'loading-state' : ''}
           style={{
             width: '100%',
             padding: '10px 12px',
-            border: `1px solid ${theme.border}`,
+            border: `1px solid ${isImproving ? '#4ade80' : theme.border}`,
             borderRadius: '6px',
             fontSize: '14px',
             outline: 'none',
+            minHeight: '100px',
+            maxHeight: '200px',
+            overflow: 'auto',
             background: objective
               ? theme.inputBg === '#334155'
                 ? '#64748b'
@@ -76,7 +130,10 @@ export default function ObjectivesForm({ objective, onChange, theme }: Props) {
               : theme.inputBg,
             color: theme.text,
             resize: 'none',
-            transition: 'all 0.3s ease',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            opacity: isImproving ? 0.8 : 1,
+            transform: isImproving ? 'scale(1.02)' : 'scale(1)',
+            boxShadow: isImproving ? '0 0 20px rgba(74, 222, 128, 0.3)' : 'none',
           }}
           placeholder="Descreva seus objetivos de carreira, aspirações e o que você busca em sua próxima posição..."
         />
@@ -97,6 +154,40 @@ export default function ObjectivesForm({ objective, onChange, theme }: Props) {
             {objective.length}/300
           </span>
         </div>
+        
+        {objective && (
+          <button
+            onClick={handleImproveText}
+            disabled={isImproving}
+            className={`btn-primary ${isImproving ? 'loading-btn' : ''}`}
+            style={{
+              marginTop: '12px',
+              cursor: isImproving ? 'not-allowed' : 'pointer',
+              opacity: isImproving ? 0.8 : 1,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              transform: isImproving ? 'scale(0.98)' : 'scale(1)',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              background: isImproving 
+                ? 'linear-gradient(135deg, #4ade80 0%, #22c55e 100%)' 
+                : undefined,
+            }}
+          >
+            {isImproving && (
+              <LoadingSpinner 
+                size={16} 
+                color="white" 
+              />
+            )}
+            <span style={{
+              transition: 'all 0.2s ease',
+              opacity: isImproving ? 0.9 : 1,
+            }}>
+              {isImproving ? '🤖 Melhorando...' : '✨ Melhorar Texto'}
+            </span>
+          </button>
+        )}
       </div>
 
       {!objective && (

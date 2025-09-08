@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { generateId } from '../utils/helpers';
 import ConfirmDialog from './ConfirmDialog';
+import LoadingSpinner from './LoadingSpinner';
 
 interface Education {
   id: string;
@@ -39,25 +40,31 @@ export default function EducationForm({ educations, onChange, theme }: Props) {
     endDate: '',
     isCurrentStudy: false,
   });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const addEducation = () => {
+  const addEducation = async () => {
     if (newEdu.institution.trim() && newEdu.degree.trim()) {
-      const education: Education = {
-        id: generateId(),
-        ...newEdu,
-        institution: newEdu.institution.trim(),
-        degree: newEdu.degree.trim(),
-        field: newEdu.field.trim(),
-      };
-      onChange([...educations, education]);
-      setNewEdu({
-        institution: '',
-        degree: '',
-        field: '',
-        startDate: '',
-        endDate: '',
-        isCurrentStudy: false,
-      });
+      setIsLoading(true);
+      try {
+        const education: Education = {
+          id: generateId(),
+          ...newEdu,
+          institution: newEdu.institution.trim(),
+          degree: newEdu.degree.trim(),
+          field: newEdu.field.trim(),
+        };
+        onChange([...educations, education]);
+        setNewEdu({
+          institution: '',
+          degree: '',
+          field: '',
+          startDate: '',
+          endDate: '',
+          isCurrentStudy: false,
+        });
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -249,12 +256,20 @@ export default function EducationForm({ educations, onChange, theme }: Props) {
 
         <button
           onClick={addEducation}
+          disabled={isLoading}
           className="btn-primary"
           style={{
             width: '100%',
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+            opacity: isLoading ? 0.7 : 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
           }}
         >
-          Adicionar Educação
+          {isLoading && <LoadingSpinner size={16} color="white" />}
+          {isLoading ? 'Adicionando...' : 'Adicionar Educação'}
         </button>
       </div>
 

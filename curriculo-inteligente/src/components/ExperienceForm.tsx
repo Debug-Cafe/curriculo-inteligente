@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Experience } from '../types';
 import ConfirmDialog from './ConfirmDialog';
+import LoadingSpinner from './LoadingSpinner';
 
 interface Props {
   experiences: Experience[];
@@ -33,25 +34,32 @@ export default function ExperienceForm({
     isCurrentJob: false,
     description: '',
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [improvingId, setImprovingId] = useState<string | null>(null);
 
-  const addExperience = () => {
+  const addExperience = async () => {
     if (newExp.company.trim() && newExp.position.trim() && newExp.startDate) {
-      const experience: Experience = {
-        id: Date.now().toString(),
-        ...newExp,
-        company: newExp.company.trim(),
-        position: newExp.position.trim(),
-        description: newExp.description.trim(),
-      };
-      onChange([...experiences, experience]);
-      setNewExp({
-        company: '',
-        position: '',
-        startDate: '',
-        endDate: '',
-        isCurrentJob: false,
-        description: '',
-      });
+      setIsLoading(true);
+      try {
+        const experience: Experience = {
+          id: Date.now().toString(),
+          ...newExp,
+          company: newExp.company.trim(),
+          position: newExp.position.trim(),
+          description: newExp.description.trim(),
+        };
+        onChange([...experiences, experience]);
+        setNewExp({
+          company: '',
+          position: '',
+          startDate: '',
+          endDate: '',
+          isCurrentJob: false,
+          description: '',
+        });
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -66,6 +74,81 @@ export default function ExperienceForm({
 
   const handleCancelRemove = () => {
     setConfirmDialog({ isOpen: false, expId: '', expName: '' });
+  };
+
+  const handleImproveDescription = async (expId: string, description: string) => {
+    if (!description.trim()) return;
+    
+    setImprovingId(expId);
+    try {
+      const response = await fetch('http://localhost:3001/api/ai/improve', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({
+          text: description.trim(),
+          type: 'elaboration'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro na requisição');
+      }
+
+      const data = await response.json();
+      const improvedText = data.improvedText;
+      
+      const updatedExperiences = experiences.map(exp => 
+        exp.id === expId ? { ...exp, description: improvedText } : exp
+      );
+      onChange(updatedExperiences);
+    } catch (error) {
+      console.error('Erro ao melhorar texto:', error);
+      console.error('Detalhes do erro:', error.message);
+      const fallbackText = `${description.trim()} - Descrição melhorada com IA`;
+      const updatedExperiences = experiences.map(exp => 
+        exp.id === expId ? { ...exp, description: fallbackText } : exp
+      );
+      onChange(updatedExperiences);
+    } finally {
+      setImprovingId(null);
+    }
+  };
+
+  const handleImproveNewDescription = async () => {
+    if (!newExp.description.trim()) return;
+    
+    setImprovingId('new');
+    try {
+      const response = await fetch('http://localhost:3001/api/ai/improve', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({
+          text: newExp.description.trim(),
+          type: 'elaboration'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro na requisição');
+      }
+
+      const data = await response.json();
+      const improvedText = data.improvedText;
+      
+      setNewExp({ ...newExp, description: improvedText });
+    } catch (error) {
+      console.error('Erro ao melhorar texto:', error);
+      const fallbackText = `${newExp.description.trim()} - Descrição melhorada com IA`;
+      setNewExp({ ...newExp, description: fallbackText });
+    } finally {
+      setImprovingId(null);
+    }
   };
 
   return (
@@ -293,9 +376,12 @@ export default function ExperienceForm({
           </label>
           <textarea
             value={newExp.description}
-            onChange={(e) =>
-              setNewExp({ ...newExp, description: e.target.value })
-            }
+            onChange={(e) => {
+              setNewExp({ ...newExp, description: e.target.value });
+              // Auto-expand textarea
+              e.target.style.height = 'auto';
+              e.target.style.height = e.target.scrollHeight + 'px';
+            }}
             rows={3}
             style={{
               width: '100%',
@@ -305,6 +391,9 @@ export default function ExperienceForm({
               fontSize: '14px',
               outline: 'none',
               resize: 'none',
+              minHeight: '80px',
+              maxHeight: '200px',
+              overflow: 'auto',
               background: newExp.description
                 ? theme.inputBg === '#334155'
                   ? '#64748b'
@@ -314,16 +403,60 @@ export default function ExperienceForm({
             }}
             placeholder="Principais responsabilidades e conquistas..."
           />
+          
+          {newExp.description && (
+            <button
+              onClick={() => handleImproveNewDescription()}
+              disabled={improvingId === 'new'}
+              className={`btn-primary ${improvingId === 'new' ? 'loading-btn' : ''}`}
+              style={{
+                marginTop: '8px',
+                fontSize: '12px',
+                padding: '6px 12px',
+                cursor: improvingId === 'new' ? 'not-allowed' : 'pointer',
+                opacity: improvingId === 'new' ? 0.8 : 1,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transform: improvingId === 'new' ? 'scale(0.98)' : 'scale(1)',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                background: improvingId === 'new' 
+                  ? 'linear-gradient(135deg, #4ade80 0%, #22c55e 100%)' 
+                  : undefined,
+              }}
+            >
+              {improvingId === 'new' && (
+                <LoadingSpinner 
+                  size={12} 
+                  color="white" 
+                />
+              )}
+              <span style={{
+                transition: 'all 0.2s ease',
+                opacity: improvingId === 'new' ? 0.9 : 1,
+              }}>
+                {improvingId === 'new' ? '🤖 Melhorando...' : '✨ Melhorar Descrição'}
+              </span>
+            </button>
+          )}
         </div>
 
         <button
           onClick={addExperience}
+          disabled={isLoading}
           className="btn-primary"
           style={{
             width: '100%',
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+            opacity: isLoading ? 0.7 : 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
           }}
         >
-          Adicionar Experiência
+          {isLoading && <LoadingSpinner size={16} color="white" />}
+          {isLoading ? 'Adicionando...' : 'Adicionar Experiência'}
         </button>
       </div>
 
@@ -433,16 +566,51 @@ export default function ExperienceForm({
                 </button>
               </div>
               {exp.description && (
-                <p
-                  style={{
-                    fontSize: '14px',
-                    color: theme.text,
-                    opacity: 0.8,
-                    lineHeight: '1.5',
-                  }}
-                >
-                  {exp.description}
-                </p>
+                <div>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      color: theme.text,
+                      opacity: 0.8,
+                      lineHeight: '1.5',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    {exp.description}
+                  </p>
+                  <button
+                    onClick={() => handleImproveDescription(exp.id, exp.description)}
+                    disabled={improvingId === exp.id}
+                    className={`btn-primary ${improvingId === exp.id ? 'loading-btn' : ''}`}
+                    style={{
+                      fontSize: '12px',
+                      padding: '6px 12px',
+                      cursor: improvingId === exp.id ? 'not-allowed' : 'pointer',
+                      opacity: improvingId === exp.id ? 0.8 : 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      transform: improvingId === exp.id ? 'scale(0.98)' : 'scale(1)',
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      background: improvingId === exp.id 
+                        ? 'linear-gradient(135deg, #4ade80 0%, #22c55e 100%)' 
+                        : undefined,
+                    }}
+                  >
+                    {improvingId === exp.id && (
+                      <LoadingSpinner 
+                        size={12} 
+                        color="white" 
+                      />
+                    )}
+                    <span style={{
+                      transition: 'all 0.2s ease',
+                      opacity: improvingId === exp.id ? 0.9 : 1,
+                    }}>
+                      {improvingId === exp.id ? '🤖 Melhorando...' : '✨ Melhorar'}
+                    </span>
+                  </button>
+                </div>
               )}
             </div>
           ))}

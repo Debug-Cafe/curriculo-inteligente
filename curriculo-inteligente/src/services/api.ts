@@ -44,10 +44,6 @@ export const api = {
     return apiRequest('/resumes');
   },
 
-  async getUserResumes(userId: string): Promise<Resume[]> {
-    return apiRequest(`/users/${userId}/resumes`);
-  },
-
   async deleteResume(id: string): Promise<void> {
     await apiRequest(`/resumes/${id}`, {
       method: 'DELETE',

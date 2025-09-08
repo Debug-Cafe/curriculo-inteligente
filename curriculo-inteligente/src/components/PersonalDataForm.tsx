@@ -1,5 +1,6 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import type { PersonalData } from '../types';
+import LoadingSpinner from './LoadingSpinner';
 
 interface Props {
   data: PersonalData;
@@ -20,6 +21,7 @@ export default function PersonalDataForm({ data, onChange, theme }: Props) {
   const phoneRef = useRef<HTMLInputElement>(null);
   const linkedinRef = useRef<HTMLInputElement>(null);
   const summaryRef = useRef<HTMLTextAreaElement>(null);
+  const [isImproving, setIsImproving] = useState(false);
 
   useEffect(() => {
     if (nameRef.current) nameRef.current.value = data.name;
@@ -37,6 +39,60 @@ export default function PersonalDataForm({ data, onChange, theme }: Props) {
       linkedin: linkedinRef.current?.value || '',
       summary: summaryRef.current?.value || '',
     });
+  };
+
+  const handleImproveText = async () => {
+    if (!data.summary.trim()) return;
+    
+    console.log('Iniciando melhoria de texto:', data.summary.trim());
+    setIsImproving(true);
+    try {
+      console.log('Fazendo requisição para:', 'http://localhost:3001/api/ai/improve');
+      console.log('Token:', localStorage.getItem('token') ? 'Presente' : 'Ausente');
+      
+      const response = await fetch('http://localhost:3001/api/ai/improve', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({
+          text: data.summary.trim(),
+          type: 'summary'
+        })
+      });
+
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log('Erro da API:', errorText);
+        throw new Error(`Erro na requisição: ${response.status} - ${errorText}`);
+      }
+
+      const responseData = await response.json();
+      console.log('Resposta da API:', responseData);
+      const improvedText = responseData.improvedText;
+      
+      const updatedData = { ...data, summary: improvedText };
+      onChange(updatedData);
+      
+      if (summaryRef.current) {
+        summaryRef.current.value = improvedText;
+      }
+    } catch (error) {
+      console.error('Erro ao melhorar texto:', error);
+      console.error('Detalhes do erro:', error.message);
+      const fallbackText = `${data.summary.trim()} - Resumo melhorado com IA`;
+      const updatedData = { ...data, summary: fallbackText };
+      onChange(updatedData);
+      if (summaryRef.current) {
+        summaryRef.current.value = fallbackText;
+      }
+    } finally {
+      setIsImproving(false);
+    }
   };
   const formatPhone = (value: string): string => {
     const numbers = value.replace(/\D/g, '');
@@ -210,12 +266,26 @@ export default function PersonalDataForm({ data, onChange, theme }: Props) {
           </label>
           <textarea
             ref={summaryRef}
-            onInput={handleInput}
+            onInput={(e) => {
+              handleInput();
+              // Auto-expand textarea
+              e.currentTarget.style.height = 'auto';
+              e.currentTarget.style.height = e.currentTarget.scrollHeight + 'px';
+            }}
             maxLength={500}
             rows={4}
+            className={isImproving ? 'loading-state' : ''}
             style={{
               ...getInputStyle(data.summary),
               resize: 'none',
+              minHeight: '100px',
+              maxHeight: '250px',
+              overflow: 'auto',
+              border: `1px solid ${isImproving ? '#4ade80' : theme.border}`,
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              opacity: isImproving ? 0.8 : 1,
+              transform: isImproving ? 'scale(1.02)' : 'scale(1)',
+              boxShadow: isImproving ? '0 0 20px rgba(74, 222, 128, 0.3)' : 'none',
             }}
             placeholder="Breve descrição do seu histórico profissional e objetivos de carreira..."
           />
@@ -236,6 +306,40 @@ export default function PersonalDataForm({ data, onChange, theme }: Props) {
               {data.summary.length}/500
             </span>
           </div>
+          
+          {data.summary && (
+            <button
+              onClick={handleImproveText}
+              disabled={isImproving}
+              className={`btn-primary ${isImproving ? 'loading-btn' : ''}`}
+              style={{
+                marginTop: '12px',
+                cursor: isImproving ? 'not-allowed' : 'pointer',
+                opacity: isImproving ? 0.8 : 1,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                transform: isImproving ? 'scale(0.98)' : 'scale(1)',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                background: isImproving 
+                  ? 'linear-gradient(135deg, #4ade80 0%, #22c55e 100%)' 
+                  : undefined,
+              }}
+            >
+              {isImproving && (
+                <LoadingSpinner 
+                  size={16} 
+                  color="white" 
+                />
+              )}
+              <span style={{
+                transition: 'all 0.2s ease',
+                opacity: isImproving ? 0.9 : 1,
+              }}>
+                {isImproving ? '🤖 Melhorando...' : '✨ Melhorar Resumo'}
+              </span>
+            </button>
+          )}
         </div>
       </div>
     </div>

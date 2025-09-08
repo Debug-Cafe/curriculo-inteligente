@@ -1,4 +1,5 @@
 import type { Resume } from '../types';
+import { useResponsive } from '../hooks/useResponsive';
 
 interface Props {
   resume: Resume;
@@ -13,7 +14,8 @@ interface Props {
 }
 
 export default function ResumePreview({ resume, template, theme }: Props) {
-  const { personalData, skills, experiences } = resume;
+  const { personalData, skills, experiences, objectives } = resume;
+  const { isMobile, isTablet } = useResponsive();
 
   const getTemplateStyles = () => {
     switch (template) {
@@ -64,16 +66,16 @@ export default function ResumePreview({ resume, template, theme }: Props) {
         background: theme.cardBg,
         border: `1px solid ${theme.border}`,
         borderRadius: '8px',
-        padding: '24px',
+        padding: isMobile ? '16px' : '24px',
         transition: 'all 0.3s ease',
       }}
     >
       <h2
         style={{
-          fontSize: '18px',
+          fontSize: isMobile ? '16px' : '18px',
           fontWeight: '600',
           color: theme.text,
-          marginBottom: '20px',
+          marginBottom: isMobile ? '16px' : '20px',
         }}
       >
         Visualização - Template{' '}
@@ -95,16 +97,21 @@ export default function ResumePreview({ resume, template, theme }: Props) {
           background: theme.bg,
           border: `1px solid ${theme.border}`,
           borderRadius: '8px',
+          display: 'flex',
+          justifyContent: 'center',
         }}
       >
         <div
           id="resume-content"
           style={{
-            padding: '32px',
-            minHeight: '600px',
+            padding: isMobile ? '16px' : '24px',
+            minHeight: isMobile ? '400px' : '500px',
             fontFamily: templateStyles.font,
-            transform: 'scale(0.95)',
-            transformOrigin: 'top left',
+            transform: isMobile ? 'scale(0.75)' : isTablet ? 'scale(0.8)' : 'scale(0.85)',
+            transformOrigin: 'top center',
+            width: '100%',
+            maxWidth: '600px',
+            margin: '0 auto',
             transition: 'transform 0.3s ease',
             WebkitPrintColorAdjust: 'exact',
             colorAdjust: 'exact',
@@ -117,15 +124,15 @@ export default function ResumePreview({ resume, template, theme }: Props) {
           style={{
             background: templateStyles.headerBg,
             color: 'white',
-            padding: '24px',
+            padding: isMobile ? '16px' : '24px',
             borderRadius: '8px',
             textAlign: 'center',
-            marginBottom: '24px',
+            marginBottom: isMobile ? '16px' : '24px',
           }}
         >
           <h1
             style={{
-              fontSize: template === 'creative' ? '32px' : '28px',
+              fontSize: template === 'creative' ? '26px' : '24px',
               fontWeight: '700',
               marginBottom: '8px',
               textShadow:
@@ -155,13 +162,13 @@ export default function ResumePreview({ resume, template, theme }: Props) {
 
         {/* Summary */}
         {personalData.summary && (
-          <div style={{ marginBottom: '24px' }}>
+          <div style={{ marginBottom: '20px' }}>
             <h2
               style={{
-                fontSize: '18px',
+                fontSize: '16px',
                 fontWeight: '600',
                 color: 'var(--text-primary)',
-                marginBottom: '12px',
+                marginBottom: '10px',
                 borderBottom: `2px solid ${templateStyles.accentColor}`,
                 paddingBottom: '4px',
               }}
@@ -170,10 +177,11 @@ export default function ResumePreview({ resume, template, theme }: Props) {
             </h2>
             <p
               style={{
-                fontSize: '14px',
+                fontSize: '13px',
                 color: 'var(--text-secondary)',
-                lineHeight: '1.6',
+                lineHeight: '1.5',
                 fontStyle: template === 'classic' ? 'italic' : 'normal',
+                textAlign: 'justify',
               }}
             >
               {personalData.summary}
@@ -183,13 +191,13 @@ export default function ResumePreview({ resume, template, theme }: Props) {
 
         {/* Skills */}
         {skills.length > 0 && (
-          <div style={{ marginBottom: '24px' }}>
+          <div style={{ marginBottom: '20px' }}>
             <h2
               style={{
-                fontSize: '18px',
+                fontSize: '16px',
                 fontWeight: '600',
                 color: 'var(--text-primary)',
-                marginBottom: '12px',
+                marginBottom: '10px',
                 borderBottom: `2px solid ${templateStyles.accentColor}`,
                 paddingBottom: '4px',
               }}
@@ -232,15 +240,44 @@ export default function ResumePreview({ resume, template, theme }: Props) {
           </div>
         )}
 
+        {/* Objectives */}
+        {objectives && (
+          <div style={{ marginBottom: '20px' }}>
+            <h2
+              style={{
+                fontSize: '16px',
+                fontWeight: '600',
+                color: 'var(--text-primary)',
+                marginBottom: '10px',
+                borderBottom: `2px solid ${templateStyles.accentColor}`,
+                paddingBottom: '4px',
+              }}
+            >
+              Objetivos de Carreira
+            </h2>
+            <p
+              style={{
+                fontSize: '13px',
+                color: 'var(--text-secondary)',
+                lineHeight: '1.5',
+                fontStyle: template === 'classic' ? 'italic' : 'normal',
+                textAlign: 'justify',
+              }}
+            >
+              {objectives}
+            </p>
+          </div>
+        )}
+
         {/* Experience */}
         {experiences.length > 0 && (
           <div>
             <h2
               style={{
-                fontSize: '18px',
+                fontSize: '16px',
                 fontWeight: '600',
                 color: 'var(--text-primary)',
-                marginBottom: '12px',
+                marginBottom: '10px',
                 borderBottom: `2px solid ${templateStyles.accentColor}`,
                 paddingBottom: '4px',
               }}
@@ -248,7 +285,7 @@ export default function ResumePreview({ resume, template, theme }: Props) {
               Experiência Profissional
             </h2>
             <div
-              style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
             >
               {experiences.map((exp, index) => (
                 <div
@@ -283,7 +320,7 @@ export default function ResumePreview({ resume, template, theme }: Props) {
                     <div>
                       <h3
                         style={{
-                          fontSize: '16px',
+                          fontSize: '15px',
                           fontWeight: '600',
                           color: 'var(--text-primary)',
                         }}
@@ -292,7 +329,7 @@ export default function ResumePreview({ resume, template, theme }: Props) {
                       </h3>
                       <p
                         style={{
-                          fontSize: '14px',
+                          fontSize: '13px',
                           fontWeight: '500',
                           color: templateStyles.accentColor,
                         }}
@@ -326,9 +363,10 @@ export default function ResumePreview({ resume, template, theme }: Props) {
                   {exp.description && (
                     <p
                       style={{
-                        fontSize: '14px',
+                        fontSize: '13px',
                         color: 'var(--text-secondary)',
-                        lineHeight: '1.5',
+                        lineHeight: '1.4',
+                        textAlign: 'justify',
                       }}
                     >
                       {exp.description}
