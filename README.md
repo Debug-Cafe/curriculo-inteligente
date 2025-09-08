@@ -226,10 +226,12 @@ cd backend
 npm install
 
 # Configurar variáveis de ambiente
-cp src/.env.example .env
-# Editar .env com suas configurações:
+cp .env.example .env
+# Editar .env conforme exemplo:
 # PORT=3001
-# JWT_SECRET=seu_jwt_secret_aqui
+# JWT_SECRET=sua_chave_secreta_aqui
+# GEMINI_API_KEY=sua_gemini_api_key_aqui
+# GEMINI_API_URL=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
 ```
 
 ### 3. Configurar Frontend
