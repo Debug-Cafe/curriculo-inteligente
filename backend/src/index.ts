@@ -1,7 +1,10 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import { authRouter } from './routes/auth';
 import { resumesRouter } from './routes/resumes';
+import { aiRouter } from './routes/aiRoutes';
 import { usersRouter } from './routes/users';
 import { initDatabase } from './database/database';
 
@@ -26,8 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRouter);
 app.use('/api/resumes', resumesRouter);
 app.use('/api/users', usersRouter);
-
-
+app.use('/api/ai', aiRouter); // <<< ESTA É A LINHA QUE FOI ADICIONADA
 
 // Rota de health check
 app.get('/health', (req, res) => {
@@ -47,6 +49,6 @@ app.use('*', (req, res) => {
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor rodando na porta ${PORT}`);
-  console.log(`Health check disponível em: http://localhost:${PORT}/health`);
+  console.log(`Health check disponível em: http://localhost:${PORT}/health` );
 });
 

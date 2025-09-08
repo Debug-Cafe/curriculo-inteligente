@@ -13,10 +13,14 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@types/express": "^4.17.17",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "dotenv-cli": "^10.0.0",
     "express": "^4.20.0",
+    "express-validator": "^7.2.1",
     "jsonwebtoken": "^9.0.2",
     "sqlite3": "^5.1.7",
     "uuid": "^11.1.0"
@@ -33,3 +37,4 @@
     "typescript": "^5.9.2"
   }
 }
+
